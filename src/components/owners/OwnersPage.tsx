@@ -406,49 +406,49 @@ export function OwnersPage({ onOwnerSelect }: OwnersPageProps) {
                 ))}
 
                 {/* Footer actions */}
-                <div className="flex items-center justify-between gap-2 pt-2 border-t border-border">
-                  <div className="flex items-center gap-3">
-                    {owner.whatsapp && (
-                      <button
-                        onClick={(e) => { e.stopPropagation(); openWhatsApp(owner.whatsapp!); }}
-                        className="flex items-center gap-1 text-xs text-emerald-600 hover:text-emerald-700 font-medium"
-                      >
-                        <MessageCircle className="w-3.5 h-3.5" />
-                        WhatsApp
-                      </button>
-                    )}
+                <div className="flex flex-wrap items-center justify-start gap-2 pt-3 mt-1 border-t border-border">
+                  {owner.whatsapp && (
                     <button
-                      onClick={(e) => toggleQuerComprar(owner, e)}
-                      className={cn(
-                        'flex items-center gap-1 text-xs font-semibold rounded-md px-2 py-1 transition-all',
-                        owner.quer_comprar
-                          ? 'bg-amber-500 text-white hover:bg-amber-600'
-                          : 'bg-amber-500/15 text-amber-700 hover:bg-amber-500/25'
-                      )}
-                      title={owner.quer_comprar ? 'Desmarcar' : 'Marcar como vendendo para comprar'}
+                      onClick={(e) => { e.stopPropagation(); openWhatsApp(owner.whatsapp!); }}
+                      className="flex items-center gap-1.5 text-xs text-emerald-600 hover:text-emerald-700 font-medium mr-auto"
                     >
-                      <ShoppingCart className="w-3.5 h-3.5" />
+                      <MessageCircle className="w-3.5 h-3.5" />
+                      WhatsApp
+                    </button>
+                  )}
+                  <button
+                    onClick={(e) => toggleQuerComprar(owner, e)}
+                    className={cn(
+                      'flex items-center gap-1.5 text-xs font-semibold rounded-md px-2 py-1.5 transition-all',
+                      owner.quer_comprar
+                        ? 'bg-amber-500 text-white hover:bg-amber-600'
+                        : 'bg-amber-500/15 text-amber-700 hover:bg-amber-500/25'
+                    )}
+                    title={owner.quer_comprar ? 'Desmarcar' : 'Marcar como vendendo para comprar'}
+                  >
+                    <ShoppingCart className="w-3.5 h-3.5" />
+                    <span className="truncate max-w-[130px] sm:max-w-none">
                       {isMobile
                         ? (owner.quer_comprar ? 'Comprador ✓' : 'Comprador')
                         : (owner.quer_comprar ? 'Vendendo p/ Comprar ✓' : 'Vendendo p/ Comprar')}
+                    </span>
+                  </button>
+                  {owner.whatsapp && (
+                    <button
+                      onClick={(e) => createAsClient(owner, e)}
+                      disabled={creatingClient === owner.whatsapp}
+                      className={cn(
+                        'flex items-center gap-1.5 text-xs font-semibold rounded-md px-2 py-1.5 transition-all disabled:opacity-50',
+                        'bg-blue-500/15 text-blue-700 hover:bg-blue-500/25'
+                      )}
+                      title="Criar como cliente"
+                    >
+                      {creatingClient === owner.whatsapp
+                        ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        : <UserPlus className="w-3.5 h-3.5" />}
+                      {isMobile ? 'Cliente' : 'Criar Cliente'}
                     </button>
-                    {owner.whatsapp && (
-                      <button
-                        onClick={(e) => createAsClient(owner, e)}
-                        disabled={creatingClient === owner.whatsapp}
-                        className={cn(
-                          'flex items-center gap-1 text-xs font-semibold rounded-md px-2 py-1 transition-all disabled:opacity-50',
-                          'bg-blue-500/15 text-blue-700 hover:bg-blue-500/25'
-                        )}
-                        title="Criar como cliente"
-                      >
-                        {creatingClient === owner.whatsapp
-                          ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          : <UserPlus className="w-3.5 h-3.5" />}
-                        {isMobile ? 'Cliente' : 'Criar Cliente'}
-                      </button>
-                    )}
-                  </div>
+                  )}
                 </div>
               </div>
             );
