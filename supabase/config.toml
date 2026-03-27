@@ -1,0 +1,31 @@
+project_id = "zbrvgvdpnhrhclgxkise"
+
+[functions.create-admin-user]
+verify_jwt = false
+
+[functions.ai-chat]
+verify_jwt = false
+
+[functions.webhook-evolution]
+verify_jwt = false
+
+[functions.sync-feed]
+verify_jwt = false
+
+[functions.test-ai]
+verify_jwt = false
+
+[functions.ai-match]
+verify_jwt = false
+
+[functions.sync-blow]
+verify_jwt = false
+
+[functions.notify-idle-clients]
+verify_jwt = false
+
+[functions.scrape-listing]
+verify_jwt = false
+
+[functions.scrape-lancamento]
+verify_jwt = false

@@ -1,0 +1,1 @@
+ALTER TABLE public.clients ADD COLUMN portaria_preferencia text[] DEFAULT '{}'::text[];

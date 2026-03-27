@@ -1,0 +1,1 @@
+ALTER TYPE public.deal_client_stage ADD VALUE IF NOT EXISTS 'visita_agendada' AFTER 'agendar_visita';

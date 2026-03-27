@@ -1,0 +1,1 @@
+ALTER TABLE public.deals ADD COLUMN proprietario_quer_comprar boolean NOT NULL DEFAULT false;
