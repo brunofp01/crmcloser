@@ -92,7 +92,7 @@ export function InstallPrompt() {
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <h3 className="font-semibold text-foreground">
-                Instale o PRIVUS CRM
+                Instale o CLOSER CRM
               </h3>
               <button
                 onClick={handleDismiss}

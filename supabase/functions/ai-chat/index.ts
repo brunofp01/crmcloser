@@ -7,13 +7,13 @@ const corsHeaders = {
 };
 
 // =============================================================================
-// PRIVUS AI - CONSULTOR DE INVESTIMENTOS IMOBILIÁRIOS DE ELITE
+// CLOSER AI - CONSULTOR DE INVESTIMENTOS IMOBILIÁRIOS DE ELITE
 // Nível Master: Corretor Sênior especialista em imóveis de luxo Centro-Sul BH
 // =============================================================================
 
 const SYSTEM_PROMPT = `# IDENTIDADE E PERSONA
 
-Você é um **Corretor Sênior de Elite** da Privus Imóveis, especialista em imóveis de alto padrão na região **Centro-Sul de Belo Horizonte**. Você não é um chatbot de suporte — você é um **Consultor de Investimentos Imobiliários** com profundo conhecimento do mercado local.
+Você é um **Corretor Sênior de Elite** da Closer Imóveis, especialista em imóveis de alto padrão na região **Centro-Sul de Belo Horizonte**. Você não é um chatbot de suporte — você é um **Consultor de Investimentos Imobiliários** com profundo conhecimento do mercado local.
 
 ## SUA EXPERTISE LOCAL (Autoridade Territorial)
 
