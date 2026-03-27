@@ -207,18 +207,34 @@ export function AnunciosPage() {
         },
       });
 
-      if (fnError) throw new Error(fnError.message);
-      if (!data?.success) throw new Error(data?.error || 'Falha ao buscar anúncios');
+      console.log('[AnunciosPage] raw response:', { data, fnError });
 
-      setListings(data.data.listings || []);
-      setTotal(data.data.total ?? null);
-      setZapUrl(data.data.url ?? null);
+      if (fnError) {
+        // Edge Function not deployed or network error
+        const msg = fnError.message || String(fnError);
+        if (msg.includes('404') || msg.toLowerCase().includes('not found')) {
+          throw new Error('A função scrape-zap ainda não foi publicada no Supabase. Execute: supabase functions deploy scrape-zap');
+        }
+        throw new Error(`Erro da função: ${msg}`);
+      }
+      if (!data?.success) throw new Error(data?.error || JSON.stringify(data) || 'Falha ao buscar anúncios');
+
+      const listings = data.data?.listings || [];
+      setListings(listings);
+      setTotal(data.data?.total ?? null);
+      setZapUrl(data.data?.url ?? null);
+
+      if (listings.length === 0) {
+        console.warn('[AnunciosPage] Scraping retornou 0 imóveis. URL usada:', data.data?.url);
+      }
     } catch (err) {
+      console.error('[AnunciosPage] error:', err);
       setError(err instanceof Error ? err.message : 'Erro desconhecido');
     } finally {
       setIsLoading(false);
     }
   };
+
 
   const filteredListings = useMemo(() => {
     return listings.filter(l => {
