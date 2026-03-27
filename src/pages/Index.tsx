@@ -19,6 +19,7 @@ import { OwnerDetail } from '@/components/owners/OwnerDetail';
 import { LancamentosPage } from '@/components/lancamentos/LancamentosPage';
 import { LancamentoDetail } from '@/components/lancamentos/LancamentoDetail';
 import { NewLancamentoForm } from '@/components/lancamentos/NewLancamentoForm';
+import { AnunciosPage } from '@/components/anuncios/AnunciosPage';
 import { InstallPrompt } from '@/components/pwa/InstallPrompt';
 import { PushNotificationPrompt } from '@/components/pwa/PushNotificationPrompt';
 import { Client } from '@/types/client';
@@ -37,6 +38,7 @@ const viewTitles: Record<string, { title: string; subtitle?: string }> = {
   owners: { title: 'Proprietários', subtitle: 'Proprietários dos seus imóveis' },
   tasks: { title: 'Tarefas', subtitle: 'Gerencie suas tarefas e lembretes' },
   lancamentos: { title: 'Lançamentos', subtitle: 'Empreendimentos de construtoras' },
+  anuncios: { title: 'Imóveis de Anúncios', subtitle: 'Busque anúncios em tempo real no Zap Imóveis' },
   users: { title: 'Usuários', subtitle: 'Gerencie os usuários do sistema' },
   notifications: { title: 'Notificações', subtitle: 'Suas notificações e lembretes' },
   profile: { title: 'Meu Perfil', subtitle: 'Gerencie suas informações pessoais' },
@@ -49,6 +51,7 @@ const pathToView: Record<string, string> = {
   '/owners': 'owners',
   '/tasks': 'tasks',
   '/lancamentos': 'lancamentos',
+  '/anuncios': 'anuncios',
   '/users': 'users',
   '/notifications': 'notifications',
   '/profile': 'profile',
@@ -130,6 +133,8 @@ const Index = () => {
         return <TasksPage onClientSelect={openClient} />;
       case 'lancamentos':
         return <LancamentosPage onSelect={setSelectedLancamento} onNew={() => setShowNewLancamentoForm(true)} />;
+      case 'anuncios':
+        return <AnunciosPage />;
       case 'users':
         return <UserManagement />;
       case 'notifications':

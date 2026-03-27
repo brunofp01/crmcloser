@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useUnreadNotificationsCount } from '@/hooks/useNotifications';
 import {
   LayoutDashboard, Users, Menu, X, UserPlus, Settings, Bell,
-  BarChart3, UsersRound, LogOut, Building2, UserCircle, ClipboardList, Landmark, Building,
+  BarChart3, UsersRound, LogOut, Building2, UserCircle, ClipboardList, Landmark, Building, Globe,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import logo from '@/assets/closer-logo.png';
@@ -45,6 +45,7 @@ export function MobileNav({ activeView, onViewChange }: MobileNavProps) {
     { id: 'owners', label: 'Proprietários', icon: Landmark },
     { id: 'tasks', label: 'Tarefas', icon: ClipboardList },
     { id: 'lancamentos', label: 'Lançamentos', icon: Building },
+    { id: 'anuncios', label: 'Anúncios', icon: Globe },
     { id: 'notifications', label: 'Notificações', icon: Bell, badge: unreadCount },
     ...(isMaster ? [{ id: 'users', label: 'Usuários', icon: UsersRound }] : []),
     { id: 'profile', label: 'Meu Perfil', icon: UserCircle },

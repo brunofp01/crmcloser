@@ -29,3 +29,6 @@ verify_jwt = false
 
 [functions.scrape-lancamento]
 verify_jwt = false
+
+[functions.scrape-zap]
+verify_jwt = false
