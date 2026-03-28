@@ -62,11 +62,11 @@ Deno.serve(async (req) => {
       } else {
         targetUrl = `https://www.netimoveis.com/venda/${fullState}/${cSlug}/${bSlug}?pagina=${pagina}`;
       }
-      providerPrompt = `Extract from Netimóveis. Use these criteria: ${quartos ? quartos + ' bedrooms min,' : ''} ${vagas ? vagas + ' parking min,' : ''} ${area ? area + ' area min,' : ''} ${valor_max ? 'price max ' + valor_max : ''}.`;
+      providerPrompt = `Extract from Netimóveis. Criteria: ${quartos ? quartos + ' bedrooms min,' : ''} ${vagas ? vagas + ' parking min,' : ''} ${area ? area + ' area min,' : ''} ${valor_max ? 'price max ' + valor_max : ''}.`;
 
     } else if (provider === 'olx') {
       targetUrl = `https://www.olx.com.br/imoveis/venda/estado-${eSlug}/${cSlug}/${bSlug}?o=${pagina}`;
-      providerPrompt = `Extract from OLX. Keep only items matching: ${quartos ? 'min ' + quartos + ' bedrooms,' : ''} ${valor_max ? 'max price ' + valor_max : ''}.`;
+      providerPrompt = `Extract from OLX. Matching: ${quartos ? 'min ' + quartos + ' bedrooms,' : ''} ${valor_max ? 'max price ' + valor_max : ''}.`;
 
     } else {
       // Zap
@@ -74,7 +74,7 @@ Deno.serve(async (req) => {
       providerPrompt = `Extract from Zap Imóveis. Criteria: ${quartos ? quartos + ' bedrooms,' : ''} ${vagas ? vagas + ' parking,' : ''} ${valor_max ? 'max price ' + valor_max : ''}.`;
     }
 
-    console.log(`Scraping ${provider} URL:`, targetUrl);
+    console.log(`Scraping ${provider} URL (Optimized):`, targetUrl);
 
     const scrapeResponse = await fetch('https://api.firecrawl.dev/v1/scrape', {
       method: 'POST',
@@ -86,12 +86,17 @@ Deno.serve(async (req) => {
         url: targetUrl,
         formats: ['extract'],
         onlyMainContent: false,
-        waitFor: 8000,
-        timeout: 90000,
-        actions: (provider === 'netimoveis' && rSlug) ? [] : [
+        waitFor: 10000,
+        timeout: 120000,
+        // Increased scrolls to load more cards before extraction
+        actions: [
+          { type: 'wait', milliseconds: 3000 },
+          { type: 'scroll', direction: 'down', amount: 800 },
           { type: 'wait', milliseconds: 2000 },
-          { type: 'scroll', direction: 'down', amount: 500 },
+          { type: 'scroll', direction: 'down', amount: 1200 },
           { type: 'wait', milliseconds: 2000 },
+          { type: 'scroll', direction: 'down', amount: 1500 },
+          { type: 'wait', milliseconds: 3000 },
         ],
         extract: {
           schema: {
@@ -122,8 +127,10 @@ Deno.serve(async (req) => {
               total_results: { type: 'number' },
             },
           },
-          prompt: `${providerPrompt} Extract ALL real estate listings from this page. 
-          For each listing card extract: title, price (absolute number), area (number), bedrooms, bathrooms, parking, neighborhood, city, state, url (absolute), image_url (absolute), type and suites.`,
+          prompt: `IMPORTANT: EXTRACT ALL PROPERTY LISTINGS (AT LEAST 20-40 IF THEY EXIST). 
+          ${providerPrompt} 
+          Do not stop until every single card on the page has been processed. 
+          Return title, price, area, rooms, parking, location, url, and image_url for each.`,
         },
       }),
     });

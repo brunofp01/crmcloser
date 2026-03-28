@@ -207,8 +207,10 @@ export function AnunciosPage() {
   const [provider, setProvider] = useState<'zap' | 'olx' | 'netimoveis'>('netimoveis');
   const [listings, setListings] = useState<ZapListing[]>([]);
   const [total, setTotal] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const [targetUrl, setTargetUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isExpanding, setIsExpanding] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
   const [lastSearchSource, setLastSearchSource] = useState<string>('netimoveis');
@@ -227,13 +229,21 @@ export function AnunciosPage() {
     return Object.values(filters).filter(v => v !== '' && !(Array.isArray(v) && v.length === 0)).length;
   }, [filters]);
 
-  const handleSearch = async (e?: FormEvent) => {
+  const handleSearch = async (e?: FormEvent, pageToLoad: number = 1) => {
     e?.preventDefault();
     if (!searchParams.estado || !searchParams.cidade || !searchParams.bairro) return;
 
-    setIsLoading(true);
+    const isNewSearch = pageToLoad === 1;
+    
+    if (isNewSearch) {
+      setIsLoading(true);
+      setListings([]);
+      setCurrentPage(1);
+    } else {
+      setIsExpanding(true);
+    }
+    
     setError(null);
-    setListings([]);
     setHasSearched(true);
     setLastSearchSource(provider);
 
@@ -249,34 +259,38 @@ export function AnunciosPage() {
           area: searchParams.metragem,
           valor_max: searchParams.valorMax,
           provider: provider,
+          pagina: pageToLoad,
         },
       });
 
-      console.log('[AnunciosPage] raw response:', { data, fnError });
+      console.log(`[AnunciosPage] ${provider} page ${pageToLoad} response:`, { data, fnError });
 
-      if (fnError) {
-        // Edge Function not deployed or network error
-        const msg = fnError.message || String(fnError);
-        if (msg.includes('404') || msg.toLowerCase().includes('not found')) {
-          throw new Error('A função scrape-zap ainda não foi publicada no Supabase. Execute: supabase functions deploy scrape-zap');
-        }
-        throw new Error(`Erro da função: ${msg}`);
+      if (fnError) throw new Error(fnError.message || String(fnError));
+      if (!data?.success) throw new Error(data?.error || 'Falha ao buscar anúncios');
+
+      const newListings = data.data?.listings || [];
+      
+      if (isNewSearch) {
+        setListings(newListings);
+      } else {
+        setListings(prev => {
+          // Prevent duplicates by URL if possible
+          const existingUrls = new Set(prev.map(l => l.url));
+          const uniqueNew = newListings.filter((l: any) => !existingUrls.has(l.url));
+          return [...prev, ...uniqueNew];
+        });
+        setCurrentPage(pageToLoad);
       }
-      if (!data?.success) throw new Error(data?.error || JSON.stringify(data) || 'Falha ao buscar anúncios');
-
-      const listings = data.data?.listings || [];
-      setListings(listings);
+      
       setTotal(data.data?.total ?? null);
       setTargetUrl(data.data?.url ?? null);
 
-      if (listings.length === 0) {
-        console.warn('[AnunciosPage] Scraping retornou 0 imóveis. URL usada:', data.data?.url);
-      }
     } catch (err) {
       console.error('[AnunciosPage] error:', err);
       setError(err instanceof Error ? err.message : 'Erro desconhecido');
     } finally {
       setIsLoading(false);
+      setIsExpanding(false);
     }
   };
 
@@ -613,8 +627,29 @@ export function AnunciosPage() {
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {filteredListings.map(listing => (
-                    <AnuncioCard key={listing.id} listing={listing} source={lastSearchSource} />
+                    <AnuncioCard key={`${listing.url}-${listing.id}`} listing={listing} source={lastSearchSource} />
                   ))}
+                </div>
+              )}
+
+              {/* Pagination / Load More */}
+              {!isLoading && listings.length > 0 && (
+                <div className="flex flex-col items-center justify-center pt-8 pb-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => handleSearch(undefined, currentPage + 1)}
+                    disabled={isExpanding}
+                    className="gap-2 min-w-[200px]"
+                  >
+                    {isExpanding ? (
+                      <><Loader2 className="w-4 h-4 animate-spin" /> Carregando mais...</>
+                    ) : (
+                      <><RefreshCw className="w-4 h-4" /> Carregar mais resultados</>
+                    )}
+                  </Button>
+                  <p className="text-[10px] text-muted-foreground mt-2">
+                    Página {currentPage} carregada
+                  </p>
                 </div>
               )}
             </>
