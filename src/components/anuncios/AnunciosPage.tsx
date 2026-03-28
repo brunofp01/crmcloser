@@ -73,8 +73,19 @@ const formatCurrency = (value: number | null) => {
 
 // ─── Card ─────────────────────────────────────────────────────────────────────
 
-function AnuncioCard({ listing }: { listing: ZapListing }) {
+function AnuncioCard({ listing, source = 'zap' }: { listing: ZapListing; source?: string }) {
   const photo = listing.imagem_url || '/placeholder.svg';
+  
+  const sourceBranding = useMemo(() => {
+    switch (source) {
+      case 'olx':
+        return { name: 'OLX', icon: 'https://www.olx.com.br/favicon.ico', color: 'bg-[#6e0ad6]' };
+      case 'netimoveis':
+        return { name: 'Netimóveis', icon: 'https://www.netimoveis.com/favicon.ico', color: 'bg-[#ff6c00]' };
+      default:
+        return { name: 'Zap Imóveis', icon: 'https://www.zapimoveis.com.br/favicon.ico', color: 'bg-black/60' };
+    }
+  }, [source]);
 
   return (
     <div className="card-elevated overflow-hidden group">
@@ -92,14 +103,14 @@ function AnuncioCard({ listing }: { listing: ZapListing }) {
           </Badge>
         )}
         <div className="absolute top-2 right-2">
-          <div className="flex items-center gap-1 bg-black/60 rounded-full px-2 py-0.5">
+          <div className={cn("flex items-center gap-1 rounded-full px-2 py-0.5", sourceBranding.color)}>
             <img
-              src="https://www.zapimoveis.com.br/favicon.ico"
-              alt="Zap"
+              src={sourceBranding.icon}
+              alt={sourceBranding.name}
               className="w-3 h-3 rounded-full"
               onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
             />
-            <span className="text-white text-[9px] font-medium">Zap Imóveis</span>
+            <span className="text-white text-[9px] font-medium">{sourceBranding.name}</span>
           </div>
         </div>
       </div>
@@ -153,7 +164,7 @@ function AnuncioCard({ listing }: { listing: ZapListing }) {
               className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-md text-xs font-medium gradient-gold text-white hover:opacity-90 transition-opacity"
             >
               <ExternalLink className="w-3.5 h-3.5" />
-              Ver no Zap Imóveis
+              Ver no Site
             </a>
           ) : (
             <span className="text-xs text-muted-foreground">Link não disponível</span>
@@ -168,12 +179,14 @@ function AnuncioCard({ listing }: { listing: ZapListing }) {
 
 export function AnunciosPage() {
   const [searchParams, setSearchParams] = useState<SearchParams>({ estado: 'mg', cidade: 'belo-horizonte', bairro: '' });
+  const [provider, setProvider] = useState<'zap' | 'olx' | 'netimoveis'>('netimoveis');
   const [listings, setListings] = useState<ZapListing[]>([]);
   const [total, setTotal] = useState<number | null>(null);
   const [zapUrl, setZapUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
+  const [lastSearchSource, setLastSearchSource] = useState<string>('netimoveis');
 
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -197,6 +210,7 @@ export function AnunciosPage() {
     setError(null);
     setListings([]);
     setHasSearched(true);
+    setLastSearchSource(provider);
 
     try {
       const { data, error: fnError } = await supabase.functions.invoke('scrape-zap', {
@@ -204,6 +218,7 @@ export function AnunciosPage() {
           estado: searchParams.estado,
           cidade: searchParams.cidade,
           bairro: searchParams.bairro,
+          provider: provider,
         },
       });
 
@@ -271,7 +286,19 @@ export function AnunciosPage() {
           </div>
         </div>
 
-        <form onSubmit={handleSearch} className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+          <div className="space-y-1">
+            <Label className="text-xs">Fonte</Label>
+            <select
+              value={provider}
+              onChange={e => setProvider(e.target.value as any)}
+              className="w-full h-9 px-3 rounded-md border border-input bg-background text-sm focus:ring-1 focus:ring-accent outline-none"
+            >
+              <option value="netimoveis">Netimóveis (Garantido)</option>
+              <option value="zap">Zap Imóveis (Beta)</option>
+              <option value="olx">OLX (Beta)</option>
+            </select>
+          </div>
           <div className="space-y-1">
             <Label className="text-xs">Estado (UF)</Label>
             <Input
@@ -299,7 +326,7 @@ export function AnunciosPage() {
               className="h-9 text-sm"
             />
           </div>
-          <div className="sm:col-span-3 flex justify-end gap-2">
+          <div className="sm:col-span-4 flex justify-end gap-2">
             {zapUrl && (
               <a
                 href={zapUrl}
@@ -308,7 +335,7 @@ export function AnunciosPage() {
                 className="flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-medium border border-border text-muted-foreground hover:bg-secondary transition-colors"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
-                Ver no Zap
+                Ver no Site
               </a>
             )}
             <Button
@@ -323,7 +350,7 @@ export function AnunciosPage() {
               )}
             </Button>
           </div>
-        </form>
+        </div>
 
         {/* URL hint */}
         {(searchParams.estado && searchParams.cidade && searchParams.bairro) && (
@@ -453,6 +480,22 @@ export function AnunciosPage() {
               <Button variant="outline" size="sm" onClick={() => handleSearch()} className="gap-2">
                 <RefreshCw className="w-4 h-4" /> Tentar novamente
               </Button>
+              {lastSearchSource !== 'netimoveis' && (
+                <div className="mt-4 p-3 bg-accent/5 rounded-lg border border-accent/20">
+                  <p className="text-xs text-accent font-medium mb-2">Dica: O site selecionado pode estar bloqueando a busca.</p>
+                  <Button 
+                    variant="link" 
+                    size="sm" 
+                    className="text-accent underline p-0 h-auto"
+                    onClick={() => {
+                      setProvider('netimoveis');
+                      // We need to wait for state update or use direct value
+                    }}
+                  >
+                    Tentar via Netimóveis (Mais estável)
+                  </Button>
+                </div>
+              )}
             </div>
           )}
 
@@ -497,7 +540,7 @@ export function AnunciosPage() {
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {filteredListings.map(listing => (
-                    <AnuncioCard key={listing.id} listing={listing} />
+                    <AnuncioCard key={listing.id} listing={listing} source={lastSearchSource} />
                   ))}
                 </div>
               )}

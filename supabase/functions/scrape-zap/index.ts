@@ -3,13 +3,23 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
+const STATE_MAP: Record<string, string> = {
+  'ac': 'acre', 'al': 'alagoas', 'ap': 'amapa', 'am': 'amazonas', 'ba': 'bahia',
+  'ce': 'ceara', 'df': 'distrito-federal', 'es': 'espirito-santo', 'go': 'goias',
+  'ma': 'maranhao', 'mt': 'mato-grosso', 'ms': 'mato-grosso-do-sul', 'mg': 'minas-gerais',
+  'pa': 'para', 'pb': 'paraiba', 'pr': 'parana', 'pe': 'pernambuco', 'pi': 'piaui',
+  'rj': 'rio-de-janeiro', 'rn': 'rio-grande-do-norte', 'rs': 'rio-grande-do-sul',
+  'ro': 'rondonia', 'rr': 'roraima', 'sc': 'santa-catarina', 'sp': 'sao-paulo',
+  'se': 'sergipe', 'to': 'tocantins'
+};
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { estado, cidade, bairro, pagina = 1 } = await req.json();
+    const { estado, cidade, bairro, pagina = 1, provider = 'zap' } = await req.json();
 
     if (!estado || !cidade || !bairro) {
       return new Response(
@@ -26,20 +36,37 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Normalise inputs to URL-safe slugs
     const normalise = (s: string) =>
       s.trim().toLowerCase()
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')  // remove accents
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
         .replace(/\s+/g, '-')
         .replace(/[^a-z0-9-]/g, '');
 
-    const estadoSlug  = normalise(estado);
-    const cidadeSlug  = normalise(cidade);
-    const bairroSlug  = normalise(bairro);
+    const eSlug = normalise(estado);
+    const cSlug = normalise(cidade);
+    const bSlug = normalise(bairro);
 
-    // Pattern: /venda/imoveis/{estado}+{cidade}++{bairro}/
-    const zapUrl = `https://www.zapimoveis.com.br/venda/imoveis/${estadoSlug}+${cidadeSlug}++${bairroSlug}/?pagina=${pagina}`;
-    console.log('Scraping Zap URL:', zapUrl);
+    let targetUrl = '';
+    let prompt = '';
+
+    if (provider === 'netimoveis') {
+      const fullState = STATE_MAP[eSlug] || eSlug;
+      targetUrl = `https://www.netimoveis.com/venda/${fullState}/${cSlug}/${bSlug}?pagina=${pagina}`;
+      prompt = `Extract real estate listings from Netimoveis. Search results page. 
+      For each card extract: title, price (number), area (number), bedrooms, bathrooms, parking, neighborhood, city, state, url (absolute), image_url (absolute), type, suites.`;
+    } else if (provider === 'olx') {
+      targetUrl = `https://www.olx.com.br/imoveis/venda/estado-${eSlug}/${cSlug}/${bSlug}?o=${pagina}`;
+      prompt = `Extract real estate listings from OLX Brazil. Look for property cards in the search results.
+      CRITICAL: Some listings are at the top as 'Destaques' or 'Ads'. Extract ALL.
+      Each card has title, price, bedrooms, area, neighborhood, city, state, url, image_url.`;
+    } else {
+      // Default: Zap
+      targetUrl = `https://www.zapimoveis.com.br/venda/imoveis/${eSlug}+${cSlug}++${bSlug}/?pagina=${pagina}`;
+      prompt = `Extract real estate listing data from a Zap Imóveis SEARCH RESULTS page.
+      Extract: title, price (number), area (number), bedrooms, bathrooms, parking, neighborhood, city, state, url (absolute), image_url (absolute), type, suites.`;
+    }
+
+    console.log(`Scraping ${provider} URL:`, targetUrl);
 
     const scrapeResponse = await fetch('https://api.firecrawl.dev/v1/scrape', {
       method: 'POST',
@@ -48,54 +75,46 @@ Deno.serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        url: zapUrl,
-        formats: ['markdown', 'extract'],
+        url: targetUrl,
+        formats: ['extract'],
         onlyMainContent: false,
-        waitFor: 15000,
+        waitFor: provider === 'netimoveis' ? 3000 : 8000,
+        timeout: 90000,
+        actions: provider === 'netimoveis' ? [] : [
+          { type: 'wait', milliseconds: 2000 },
+          { type: 'scroll', direction: 'down', amount: 500 },
+          { type: 'wait', milliseconds: 2000 },
+        ],
         extract: {
           schema: {
             type: 'object',
             properties: {
               imoveis: {
                 type: 'array',
-                description: 'List of property listings shown on the search results page',
                 items: {
                   type: 'object',
                   properties: {
-                    title:       { type: 'string',  description: 'Property title/description headline shown on the card' },
-                    price:       { type: 'number',  description: 'Asking price in BRL (number only, no currency symbols or formatting). E.g. 850000' },
-                    area:        { type: 'number',  description: 'Total area in m²' },
-                    bedrooms:    { type: 'number',  description: 'Number of bedrooms (quartos)' },
-                    bathrooms:   { type: 'number',  description: 'Number of bathrooms (banheiros)' },
-                    parking:     { type: 'number',  description: 'Number of parking spaces (vagas)' },
-                    neighborhood:{ type: 'string',  description: 'Neighborhood (bairro)' },
-                    city:        { type: 'string',  description: 'City (cidade)' },
-                    state:       { type: 'string',  description: 'State abbreviation (UF), e.g. MG' },
-                    address:     { type: 'string',  description: 'Street address shown on the card' },
-                    url:         { type: 'string',  description: 'Full absolute URL of the individual property listing page on zapimoveis.com.br' },
-                    image_url:   { type: 'string',  description: 'Full absolute URL of the main property photo' },
-                    type:        { type: 'string',  description: 'Property type: apartamento, casa, cobertura, kitnet, studio, loft, terreno, sala comercial' },
-                    suites:      { type: 'number',  description: 'Number of suites' },
+                    title:        { type: 'string' },
+                    price:        { type: 'number' },
+                    area:         { type: 'number' },
+                    bedrooms:     { type: 'number' },
+                    bathrooms:    { type: 'number' },
+                    parking:      { type: 'number' },
+                    neighborhood: { type: 'string' },
+                    city:         { type: 'string' },
+                    state:        { type: 'string' },
+                    address:      { type: 'string' },
+                    url:          { type: 'string' },
+                    image_url:    { type: 'string' },
+                    type:         { type: 'string' },
+                    suites:       { type: 'number' },
                   },
                 },
               },
-              total_results: {
-                type: 'number',
-                description: 'Total number of listings found for this search, as shown on the page (e.g. "1.245 imóveis")',
-              },
+              total_results: { type: 'number' },
             },
           },
-          prompt: `You are extracting real estate listing data from a Zap Imóveis SEARCH RESULTS page (not a single property detail page).
-The page shows a grid/list of multiple property cards.
-
-CRITICAL INSTRUCTIONS:
-1. Extract ALL property listings visible as cards on the page. This is the search results page so it may show 10-20 listings at once.
-2. For each listing card, extract: title, price, area (m²), bedrooms, bathrooms, parking spaces, neighborhood, city, state, the individual listing URL, the main photo URL, property type and suites.
-3. Each listing card has its own link — extract the FULL absolute URL (starting with https://www.zapimoveis.com.br/).
-4. Return prices as plain numbers without R$, dots or commas. E.g. R$ 1.250.000 → 1250000.
-5. The "total_results" is the number shown at the top of the page like "X imóveis encontrados".
-6. Do NOT include sponsored listings from other sites — only real Zap Imóveis listings.
-7. If a field is not visible on a card, return null for that field.`,
+          prompt: prompt,
         },
       }),
     });
@@ -110,38 +129,35 @@ CRITICAL INSTRUCTIONS:
       );
     }
 
-    const jsonData  = scrapeData.data?.extract || scrapeData.data?.json || scrapeData.extract || scrapeData.json || {};
-    const imoveis   = Array.isArray(jsonData.imoveis) ? jsonData.imoveis : [];
-    const total     = jsonData.total_results ?? null;
+    const jsonData = scrapeData.data?.extract || scrapeData.data?.json || {};
+    const imoveis  = Array.isArray(jsonData.imoveis) ? jsonData.imoveis : [];
+    const total    = jsonData.total_results ?? null;
 
-    console.log(`Zap scrape OK: ${imoveis.length} listings, total=${total}`);
-
-    // Map to a clean shape
     const listings = imoveis.map((item: any, idx: number) => ({
-      id:           idx,
-      titulo:       item.title        || null,
-      valor:        item.price        || null,
-      metragem:     item.area         || null,
-      quartos:      item.bedrooms     || null,
-      banheiros:    item.bathrooms    || null,
-      vagas:        item.parking      || null,
-      suites:       item.suites       || null,
-      tipo:         item.type         || null,
-      bairro:       item.neighborhood || null,
-      cidade:       item.city         || null,
-      estado:       item.state        || null,
-      endereco:     item.address      || null,
-      url:          item.url          || null,
-      imagem_url:   item.image_url    || null,
+      id:         idx,
+      titulo:     item.title        || null,
+      valor:      item.price        || null,
+      metragem:   item.area         || null,
+      quartos:    item.bedrooms     || null,
+      banheiros:  item.bathrooms    || null,
+      vagas:      item.parking      || null,
+      suites:     item.suites       || null,
+      tipo:       item.type         || null,
+      bairro:     item.neighborhood || null,
+      cidade:     item.city         || null,
+      estado:     item.state        || null,
+      endereco:   item.address      || null,
+      url:        item.url          || null,
+      imagem_url: item.image_url    || null,
     }));
 
     return new Response(
-      JSON.stringify({ success: true, data: { listings, total, page: pagina, url: zapUrl } }),
+      JSON.stringify({ success: true, data: { listings, total, page: pagina, url: targetUrl, provider } }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
-    console.error('Error in scrape-zap:', error);
+    console.error('Error in scrape-listing:', error);
     return new Response(
       JSON.stringify({ success: false, error: error instanceof Error ? error.message : 'Unknown error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
