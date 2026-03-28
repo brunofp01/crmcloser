@@ -63,7 +63,7 @@ export function LandingShowcase({ mobileImg }: LandingShowcaseProps) {
             </div>
           </motion.div>
 
-          {/* Right Column: Premium Mobile Mockup */}
+          {/* Right Column: Mobile Mockup Asset */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 30 }}
             animate={isInView ? { opacity: 1, scale: 1, y: 0 } : {}}
@@ -71,33 +71,21 @@ export function LandingShowcase({ mobileImg }: LandingShowcaseProps) {
             className="flex justify-center"
           >
             <div className="relative">
-              {/* Backglow for the phone */}
-              <div className="absolute inset-0 bg-amber-500/10 rounded-[3rem] blur-3xl -z-10 animate-pulse" />
+              {/* Backglow for the mockup */}
+              <div className="absolute inset-0 bg-amber-500/10 rounded-3xl blur-3xl -z-10 animate-pulse" />
               
-              {/* iPhone 15 style mockup frame */}
-              <div className="w-[280px] sm:w-[320px] aspect-[9/19] rounded-[3rem] border-[8px] border-[#1A1A1A] bg-[#050505] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.7)] p-2 relative overflow-hidden group">
-                
-                {/* Dynamic island / Notch */}
-                <div className="absolute top-4 left-1/2 -translate-x-1/2 w-24 h-6 bg-black rounded-2xl z-20 flex items-center justify-center">
-                   <div className="w-2.5 h-2.5 bg-[#0A0A0A] rounded-full mr-2" />
-                </div>
-                
-                {/* Screen content */}
-                <div className="w-full h-full rounded-[2.25rem] overflow-hidden bg-[#0A0A0A] relative">
+              <div className="w-[280px] sm:w-[320px] relative z-20 group">
+                {/* Screen content - Using the asset directly since it already has a frame */}
+                <div className="relative transform group-hover:scale-[1.02] transition-transform duration-700 drop-shadow-[0_35px_60px_rgba(0,0,0,0.8)]">
                   <img
                     src={mobileImg}
                     alt="Closer CRM Mobile Dashboard"
-                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                    className="w-full h-auto"
                     loading="lazy"
                   />
-                  {/* Glass reflection effect */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-white/5 via-transparent to-transparent opacity-50" />
+                  {/* Subtle glass reflection overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-transparent opacity-30 pointer-events-none rounded-[2rem]" />
                 </div>
-
-                {/* Side buttons */}
-                <div className="absolute -left-2.5 top-28 w-1 h-12 bg-[#1A1A1A] rounded-r-md" />
-                <div className="absolute -left-2.5 top-44 w-1 h-16 bg-[#1A1A1A] rounded-r-md" />
-                <div className="absolute -right-2.5 top-36 w-1 h-16 bg-[#1A1A1A] rounded-l-md" />
               </div>
 
               {/* Floating Badge */}
