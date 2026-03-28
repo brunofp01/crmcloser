@@ -44,7 +44,7 @@ export default function LandingPage() {
         logo={logo}
         dashboardImg={dashboardImg}
         mobileImg={mobileImg}
-        onCTA={handleSubscribe}
+        onSubscribe={handleSubscribe}
       />
       <LandingSocialProof />
       <LandingPainPoints />
@@ -56,9 +56,9 @@ export default function LandingPage() {
       />
       <LandingHowItWorks />
       <LandingTestimonials />
-      <LandingPricing onCTA={handleSubscribe} />
+      <LandingPricing onSubscribe={handleSubscribe} />
       <LandingFAQ />
-      <LandingFinalCTA onCTA={handleSubscribe} />
+      <LandingFinalCTA onSubscribe={handleSubscribe} />
       <LandingFooter logo={logo} />
       <LandingWhatsApp />
     </div>

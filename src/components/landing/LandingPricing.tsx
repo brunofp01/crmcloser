@@ -3,7 +3,7 @@ import { useRef } from 'react';
 import { CheckCircle2, ArrowRight, Shield, Zap } from 'lucide-react';
 
 interface LandingPricingProps {
-  onCTA: () => void;
+  onSubscribe: () => void;
 }
 
 const FEATURES_LIST = [
@@ -19,7 +19,7 @@ const FEATURES_LIST = [
   'Suporte via WhatsApp',
 ];
 
-export function LandingPricing({ onCTA }: LandingPricingProps) {
+export function LandingPricing({ onSubscribe }: LandingPricingProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
@@ -101,7 +101,7 @@ export function LandingPricing({ onCTA }: LandingPricingProps) {
             </ul>
 
             <button
-              onClick={onCTA}
+              onClick={onSubscribe}
               className="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold text-[15px] hover:scale-[1.02] hover:shadow-[0_0_50px_rgba(245,158,11,0.3)] transition-all duration-300 flex items-center justify-center gap-2"
               style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
             >

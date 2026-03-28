@@ -5,10 +5,10 @@ interface LandingHeroProps {
   logo: string;
   dashboardImg: string;
   mobileImg: string;
-  onCTA: () => void;
+  onSubscribe: () => void;
 }
 
-export function LandingHero({ logo, dashboardImg, mobileImg, onCTA }: LandingHeroProps) {
+export function LandingHero({ logo, dashboardImg, mobileImg, onSubscribe }: LandingHeroProps) {
   return (
     <section className="relative pt-32 sm:pt-40 pb-8 px-4 overflow-hidden">
       {/* Deep ambient backgrounds */}
@@ -83,7 +83,7 @@ export function LandingHero({ logo, dashboardImg, mobileImg, onCTA }: LandingHer
           transition={{ duration: 0.6, delay: 0.3 }}
         >
           <button
-            onClick={onCTA}
+            onClick={onSubscribe}
             className="w-full sm:w-auto group px-8 py-4 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold text-[15px] hover:scale-105 hover:shadow-[0_0_50px_rgba(245,158,11,0.3)] transition-all duration-300 flex items-center justify-center gap-2"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >

@@ -3,10 +3,10 @@ import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 
 interface LandingFinalCTAProps {
-  onCTA: () => void;
+  onSubscribe: () => void;
 }
 
-export function LandingFinalCTA({ onCTA }: LandingFinalCTAProps) {
+export function LandingFinalCTA({ onSubscribe }: LandingFinalCTAProps) {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
@@ -37,7 +37,7 @@ export function LandingFinalCTA({ onCTA }: LandingFinalCTAProps) {
           Otimize sua operação imobiliária com um clique.
         </p>
         <button
-          onClick={onCTA}
+          onClick={onSubscribe}
           className="group px-10 py-4 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold text-[15px] hover:scale-105 hover:shadow-[0_0_50px_rgba(245,158,11,0.3)] transition-all duration-300 inline-flex items-center gap-2"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
