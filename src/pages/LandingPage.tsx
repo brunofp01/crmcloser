@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import logo from '@/assets/closer-logo.png';
 import dashboardImg from '@/assets/landing/crm-dashboard.png';
-import mobileImg from '@/assets/landing/crm-mobile.png';
+import mobileImg from '@/assets/landing/crm-mobile-v2.png';
 import propertyImg from '@/assets/landing/crm-property.png';
 import { LandingNav } from '@/components/landing/LandingNav';
 import { LandingHero } from '@/components/landing/LandingHero';
