@@ -1,6 +1,6 @@
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
-import { Smartphone, LayoutDashboard, Search, Users } from 'lucide-react';
+import { Smartphone, Download, Zap, ShieldCheck } from 'lucide-react';
 
 interface LandingShowcaseProps {
   dashboardImg: string;
@@ -9,136 +9,110 @@ interface LandingShowcaseProps {
 }
 
 export function LandingShowcase({ mobileImg }: LandingShowcaseProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"]
-  });
-
-  // Animations linked to scroll
-  const scale = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.8, 1, 1, 0.9]);
-  const rotateY = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [-20, 0, 0, 15]);
-  const opacity = useTransform(scrollYProgress, [0, 0.05, 0.95, 1], [0, 1, 1, 0]);
-  const y = useTransform(scrollYProgress, [0, 0.2, 1], [100, 0, -50]);
-  
-  // Dynamic floating labels
-  const label1Opacity = useTransform(scrollYProgress, [0.1, 0.2, 0.3, 0.4], [0, 1, 1, 0]);
-  const label2Opacity = useTransform(scrollYProgress, [0.4, 0.5, 0.6, 0.7], [0, 1, 1, 0]);
-  const label3Opacity = useTransform(scrollYProgress, [0.7, 0.8, 0.9, 0.95], [0, 1, 1, 0]);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section 
-      id="plataforma" 
-      ref={containerRef} 
-      className="relative min-h-[400vh] scroll-mt-20"
-    >
-      {/* Sticky container */}
-      <div className="sticky top-0 h-screen flex flex-col items-center justify-center overflow-hidden px-4">
-        {/* Ambient background light */}
-        <div className="absolute inset-0">
-          <motion.div 
-            style={{ opacity }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1100px] h-[700px] bg-amber-500/[0.04] rounded-full blur-[180px]" 
-          />
-        </div>
-
-        <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center">
-          {/* Header Text - moves up early in the scroll */}
+    <section id="plataforma" ref={ref} className="py-24 sm:py-32 px-4 scroll-mt-20 relative overflow-hidden">
+      {/* Background glow elements */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-amber-500/[0.03] rounded-full blur-[150px] pointer-events-none" />
+      
+      <div className="relative max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+          
+          {/* Left Column: Text Content */}
           <motion.div
-            style={{ opacity, y: useTransform(scrollYProgress, [0, 0.15], [20, 0]) }}
-            className="text-center mb-12 sm:mb-20"
+            initial={{ opacity: 0, x: -30 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <span className="text-[11px] font-semibold text-amber-400/50 uppercase tracking-[0.2em]" style={{ fontFamily: "'Inter', sans-serif" }}>
-              Mobile Freedom
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-[11px] font-bold text-amber-500 uppercase tracking-wider mb-6">
+              <Zap size={12} className="fill-amber-500" />
+              PWA Technology
             </span>
-            <h2 className="text-3xl sm:text-[4rem] font-extrabold mt-4 mb-6 tracking-[-0.03em] leading-tight" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-              Seu CRM completo<br />
+            
+            <h2 className="text-3xl sm:text-5xl font-extrabold mb-6 leading-tight tracking-tight" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+              Leve o Closer com você,<br />
               <span className="bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
-                na palma da mão
+                em qualquer lugar
               </span>
             </h2>
-            <p className="text-base sm:text-lg text-gray-400 max-w-xl mx-auto leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-              Instale o Closer como um App (PWA) e gerencie sua imobiliária com 
-              liberdade total. Performance nativa em qualquer dispositivo.
-            </p>
-          </motion.div>
-
-          {/* 3D Mobile Section */}
-          <div className="relative flex items-center justify-center pt-8 sm:pt-12">
             
-            {/* Floating Labels that appear during scroll */}
-            <div className="absolute inset-0 pointer-events-none z-30">
-              <motion.div 
-                style={{ opacity: label1Opacity, x: -180, y: -60 }}
-                className="absolute left-1/2 top-1/4 bg-[#0F0F0F]/90 backdrop-blur-xl border border-white/5 p-3 rounded-lg shadow-2xl hidden lg:flex items-center gap-3"
-              >
-                <div className="p-2 rounded bg-amber-500/10 text-amber-500"><LayoutDashboard size={18} /></div>
-                <div className="text-left"><p className="text-xs font-bold text-white">Dashboard</p><p className="text-[10px] text-gray-500 whitespace-nowrap">Resumo em tempo real</p></div>
-              </motion.div>
+            <p className="text-gray-400 text-lg mb-10 leading-relaxed max-w-xl">
+              Instale o Closer como um App (PWA) em segundos diretamente pelo seu navegador. 
+              Tenha performance nativa, acesso offline e o controle total da sua imobiliária 
+              na palma da sua mão.
+            </p>
 
-              <motion.div 
-                style={{ opacity: label2Opacity, x: 200, y: 100 }}
-                className="absolute left-1/2 top-1/3 bg-[#0F0F0F]/90 backdrop-blur-xl border border-white/5 p-3 rounded-lg shadow-2xl hidden lg:flex items-center gap-3"
-              >
-                <div className="p-2 rounded bg-blue-500/10 text-blue-500"><Users size={18} /></div>
-                <div className="text-left"><p className="text-xs font-bold text-white">Leads</p><p className="text-[10px] text-gray-500 whitespace-nowrap">Controle total da base</p></div>
-              </motion.div>
-
-              <motion.div 
-                style={{ opacity: label3Opacity, x: -200, y: 220 }}
-                className="absolute left-1/2 top-1/2 bg-[#0F0F0F]/90 backdrop-blur-xl border border-white/5 p-3 rounded-lg shadow-2xl hidden lg:flex items-center gap-3"
-              >
-                <div className="p-2 rounded bg-emerald-500/10 text-emerald-500"><Search size={18} /></div>
-                <div className="text-left"><p className="text-xs font-bold text-white">Matches</p><p className="text-[10px] text-gray-500 whitespace-nowrap">IA buscando imóveis</p></div>
-              </motion.div>
-            </div>
-
-            {/* 3D Mobile Mockup Container with Scroll Transforms */}
-            <motion.div 
-              style={{ scale, rotateY, perspective: 1200, y }}
-              className="relative w-[280px] sm:w-[340px] aspect-[9/19] z-20"
-            >
-              {/* iPhone 15 Pro Style Frame */}
-              <div className="absolute inset-0 rounded-[3.5rem] border-[10px] border-[#1A1A1A] bg-[#050505] shadow-[0_60px_120px_-30px_rgba(0,0,0,0.9),inset_0_0_20px_rgba(255,255,255,0.05)] overflow-hidden">
-                <div className="relative w-full h-full p-1">
-                  {/* Notch / Dynamic Island */}
-                  <div className="absolute top-2 left-1/2 -translate-x-1/2 w-28 h-7 bg-black rounded-3xl z-40 hidden sm:block" />
-                  
-                  {/* Status Bar Mockup */}
-                  <div className="absolute top-0 left-0 right-0 h-10 flex justify-between items-center px-8 pt-3 z-30">
-                    <span className="text-[11px] font-bold">9:41</span>
-                    <div className="flex gap-1.5 items-center">
-                      <div className="w-4 h-2.5 border border-white/20 rounded-[2px] relative">
-                         <div className="absolute inset-[1px] bg-white rounded-[1px]" />
-                      </div>
-                    </div>
+            <div className="space-y-6">
+              {[
+                { icon: Download, title: "Sem download em lojas", text: "Instale direto pelo navegador, sem ocupar espaço desnecessário." },
+                { icon: Zap, title: "Performance Instantânea", text: "Otimizado para carregar em milissegundos mesmo em conexões lentas." },
+                { icon: ShieldCheck, title: "Sempre Atualizado", text: "Tenha sempre a versão mais recente sem precisar de updates manuais." }
+              ].map((feature, i) => (
+                <div key={i} className="flex gap-4 group">
+                  <div className="p-2.5 rounded-lg bg-white/5 border border-white/10 text-amber-500 group-hover:bg-amber-500/10 group-hover:border-amber-500/20 transition-all duration-300">
+                    <feature.icon size={20} />
                   </div>
-                  
-                  {/* Screen Content */}
-                  <div className="relative w-full h-full rounded-[3rem] overflow-hidden bg-black flex items-center justify-center">
-                    <img
-                      src={mobileImg}
-                      alt="Closer CRM Mobile App"
-                      className="w-full h-full object-cover"
-                    />
-                    {/* Glass simulation */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-white/5 via-transparent to-transparent pointer-events-none" />
+                  <div>
+                    <h4 className="text-white font-bold text-base mb-1" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>{feature.title}</h4>
+                    <p className="text-gray-500 text-sm leading-relaxed">{feature.text}</p>
                   </div>
                 </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Right Column: Premium Mobile Mockup */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 30 }}
+            animate={isInView ? { opacity: 1, scale: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+            className="flex justify-center"
+          >
+            <div className="relative">
+              {/* Backglow for the phone */}
+              <div className="absolute inset-0 bg-amber-500/10 rounded-[3rem] blur-3xl -z-10 animate-pulse" />
+              
+              {/* iPhone 15 style mockup frame */}
+              <div className="w-[280px] sm:w-[320px] aspect-[9/19] rounded-[3rem] border-[8px] border-[#1A1A1A] bg-[#050505] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.7)] p-2 relative overflow-hidden group">
+                
+                {/* Dynamic island / Notch */}
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 w-24 h-6 bg-black rounded-2xl z-20 flex items-center justify-center">
+                   <div className="w-2.5 h-2.5 bg-[#0A0A0A] rounded-full mr-2" />
+                </div>
+                
+                {/* Screen content */}
+                <div className="w-full h-full rounded-[2.25rem] overflow-hidden bg-[#0A0A0A] relative">
+                  <img
+                    src={mobileImg}
+                    alt="Closer CRM Mobile Dashboard"
+                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                    loading="lazy"
+                  />
+                  {/* Glass reflection effect */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-white/5 via-transparent to-transparent opacity-50" />
+                </div>
+
+                {/* Side buttons */}
+                <div className="absolute -left-2.5 top-28 w-1 h-12 bg-[#1A1A1A] rounded-r-md" />
+                <div className="absolute -left-2.5 top-44 w-1 h-16 bg-[#1A1A1A] rounded-r-md" />
+                <div className="absolute -right-2.5 top-36 w-1 h-16 bg-[#1A1A1A] rounded-l-md" />
               </div>
 
-              {/* Physical Buttons Simulation */}
-              <div className="absolute -right-2 top-28 w-1.5 h-16 bg-[#1A1A1A] rounded-l-md" />
-              <div className="absolute -left-2 top-24 w-1.5 h-10 bg-[#1A1A1A] rounded-r-md" />
-              <div className="absolute -left-2 top-40 w-1.5 h-16 bg-[#1A1A1A] rounded-r-md" />
-            </motion.div>
-
-            {/* Background elements */}
-            <div className="absolute inset-0 pointer-events-none">
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/5 rounded-full blur-[120px] mix-blend-screen" />
+              {/* Floating Badge */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={isInView ? { opacity: 1, scale: 1 } : {}}
+                transition={{ duration: 0.5, delay: 1 }}
+                className="absolute -bottom-6 -right-6 sm:-right-10 bg-gradient-to-br from-amber-400 to-orange-500 p-4 rounded-2xl shadow-xl flex flex-col items-center gap-1 z-30 rotate-6 hover:rotate-0 transition-all duration-300 cursor-default"
+              >
+                <Smartphone className="text-black" size={24} />
+                <span className="text-[10px] font-black text-black uppercase tracking-tighter">APP DISPONÍVEL</span>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
+
         </div>
       </div>
     </section>
