@@ -29,18 +29,22 @@ export default function LandingPage() {
     }
   }, [user, loading, navigate]);
 
-  const handleCTA = () => {
+  const handleLogin = () => {
+    navigate('/dashboard');
+  };
+
+  const handleSubscribe = () => {
     navigate('/register-subscription');
   };
 
   return (
     <div className="min-h-screen bg-[#050505] text-white overflow-x-hidden">
-      <LandingNav logo={logo} onCTA={handleCTA} />
+      <LandingNav logo={logo} onLogin={handleLogin} onSubscribe={handleSubscribe} />
       <LandingHero
         logo={logo}
         dashboardImg={dashboardImg}
         mobileImg={mobileImg}
-        onCTA={handleCTA}
+        onCTA={handleSubscribe}
       />
       <LandingSocialProof />
       <LandingPainPoints />
@@ -52,9 +56,9 @@ export default function LandingPage() {
       />
       <LandingHowItWorks />
       <LandingTestimonials />
-      <LandingPricing onCTA={handleCTA} />
+      <LandingPricing onCTA={handleSubscribe} />
       <LandingFAQ />
-      <LandingFinalCTA onCTA={handleCTA} />
+      <LandingFinalCTA onCTA={handleSubscribe} />
       <LandingFooter logo={logo} />
       <LandingWhatsApp />
     </div>

@@ -3,10 +3,11 @@ import { Menu, X } from 'lucide-react';
 
 interface LandingNavProps {
   logo: string;
-  onCTA: () => void;
+  onLogin: () => void;
+  onSubscribe: () => void;
 }
 
-export function LandingNav({ logo, onCTA }: LandingNavProps) {
+export function LandingNav({ logo, onLogin, onSubscribe }: LandingNavProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -39,15 +40,15 @@ export function LandingNav({ logo, onCTA }: LandingNavProps) {
           ))}
         </div>
         <div className="hidden md:flex items-center gap-3">
-          <button
-            onClick={onCTA}
-            className="text-[13px] text-gray-400 hover:text-white transition-colors px-4 py-2"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            Entrar
-          </button>
-          <button
-            onClick={onCTA}
+            <button
+              onClick={onLogin}
+              className="text-[13px] text-gray-400 hover:text-white transition-colors px-4 py-2"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
+              Entrar
+            </button>
+            <button
+              onClick={onSubscribe}
             className="px-6 py-2.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black text-[13px] font-semibold hover:scale-105 hover:shadow-[0_0_30px_rgba(245,158,11,0.3)] transition-all duration-300"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >
@@ -64,7 +65,7 @@ export function LandingNav({ logo, onCTA }: LandingNavProps) {
           <a href="#plataforma" className="block text-sm text-gray-400" onClick={() => setMenuOpen(false)}>Plataforma</a>
           <a href="#preco" className="block text-sm text-gray-400" onClick={() => setMenuOpen(false)}>Preço</a>
           <a href="#faq" className="block text-sm text-gray-400" onClick={() => setMenuOpen(false)}>FAQ</a>
-          <button onClick={onCTA} className="w-full py-3.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black text-sm font-semibold mt-2">
+          <button onClick={onSubscribe} className="w-full py-3.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black text-sm font-semibold mt-2">
             Assinar Agora
           </button>
         </div>
