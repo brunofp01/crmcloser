@@ -22,8 +22,8 @@ const FAQ = [
     a: 'Sim! O Closer suporta múltiplos corretores com visão gerencial, controle de equipe e relatórios.',
   },
   {
-    q: 'Preciso de cartão para testar?',
-    a: 'Não. Os 30 dias gratuitos não exigem cartão de crédito. Teste sem compromisso.',
+    q: 'Quais as formas de pagamento?',
+    a: 'Aceitamos Cartão de Crédito e PIX. A liberação do seu acesso é imediata após a confirmação do pagamento.',
   },
 ];
 

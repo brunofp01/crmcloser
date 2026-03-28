@@ -35,7 +35,7 @@ export function LandingHero({ logo, dashboardImg, mobileImg, onCTA }: LandingHer
           <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full border border-amber-500/15 bg-amber-500/[0.04]">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
             <span className="text-[11px] font-medium text-amber-400/80 tracking-[0.15em] uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>
-              30 dias grátis • sem cartão
+              Performance Máxima • Contratação Online
             </span>
           </div>
         </motion.div>
@@ -87,7 +87,7 @@ export function LandingHero({ logo, dashboardImg, mobileImg, onCTA }: LandingHer
             className="w-full sm:w-auto group px-8 py-4 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold text-[15px] hover:scale-105 hover:shadow-[0_0_50px_rgba(245,158,11,0.3)] transition-all duration-300 flex items-center justify-center gap-2"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >
-            Testar Grátis por 30 Dias
+            Começar Agora
             <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
           </button>
           <a

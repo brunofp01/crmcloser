@@ -49,7 +49,7 @@ export function LandingPricing({ onCTA }: LandingPricingProps) {
             </span>
           </h2>
           <p className="text-sm text-gray-500" style={{ fontFamily: "'Inter', sans-serif" }}>
-            Um plano único com tudo incluso. Comece grátis.
+            Um plano único com tudo incluso para você escalar.
           </p>
         </motion.div>
 
@@ -70,7 +70,7 @@ export function LandingPricing({ onCTA }: LandingPricingProps) {
               <div className="px-6 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black text-[11px] font-bold tracking-[0.1em] shadow-[0_10px_30px_-5px_rgba(245,158,11,0.4)]"
                 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
               >
-                30 DIAS GRÁTIS
+                ACESSO IMEDIATO
               </div>
             </div>
 
@@ -87,7 +87,7 @@ export function LandingPricing({ onCTA }: LandingPricingProps) {
                 <span className="text-sm text-gray-600">/mês</span>
               </div>
               <p className="text-[11px] text-gray-600" style={{ fontFamily: "'Inter', sans-serif" }}>
-                após o período de teste gratuito
+                Assinatura mensal recorrente
               </p>
             </div>
 
@@ -105,12 +105,12 @@ export function LandingPricing({ onCTA }: LandingPricingProps) {
               className="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold text-[15px] hover:scale-[1.02] hover:shadow-[0_0_50px_rgba(245,158,11,0.3)] transition-all duration-300 flex items-center justify-center gap-2"
               style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
             >
-              Começar Meus 30 Dias Grátis
+              Assinar Agora
               <ArrowRight className="w-5 h-5" />
             </button>
 
             <div className="flex items-center justify-center gap-5 mt-5 text-[11px] text-gray-600" style={{ fontFamily: "'Inter', sans-serif" }}>
-              <span className="flex items-center gap-1.5"><Shield className="w-3 h-3" /> Sem cartão</span>
+              <span className="flex items-center gap-1.5"><Shield className="w-3 h-3" /> Pagamento Seguro</span>
               <span className="flex items-center gap-1.5"><Zap className="w-3 h-3" /> Cancele quando quiser</span>
             </div>
           </div>

@@ -34,14 +34,14 @@ export function LandingFinalCTA({ onCTA }: LandingFinalCTAProps) {
         </h2>
         <p className="text-sm sm:text-base text-gray-500 mb-10 max-w-lg mx-auto leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
           Junte-se a mais de 500 corretores que já transformaram sua rotina de vendas.
-          Seus primeiros 30 dias são por nossa conta.
+          Otimize sua operação imobiliária com um clique.
         </p>
         <button
           onClick={onCTA}
           className="group px-10 py-4 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold text-[15px] hover:scale-105 hover:shadow-[0_0_50px_rgba(245,158,11,0.3)] transition-all duration-300 inline-flex items-center gap-2"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
-          Criar Minha Conta Grátis
+          Assinar Agora
           <ArrowRight className="w-5 h-5 group-hover:translate-x-0.5 transition-transform" />
         </button>
       </motion.div>

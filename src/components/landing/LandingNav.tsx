@@ -51,7 +51,7 @@ export function LandingNav({ logo, onCTA }: LandingNavProps) {
             className="px-6 py-2.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black text-[13px] font-semibold hover:scale-105 hover:shadow-[0_0_30px_rgba(245,158,11,0.3)] transition-all duration-300"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >
-            Começar Grátis
+            Assinar Agora
           </button>
         </div>
         <button className="md:hidden text-gray-400" onClick={() => setMenuOpen(!menuOpen)}>
@@ -65,7 +65,7 @@ export function LandingNav({ logo, onCTA }: LandingNavProps) {
           <a href="#preco" className="block text-sm text-gray-400" onClick={() => setMenuOpen(false)}>Preço</a>
           <a href="#faq" className="block text-sm text-gray-400" onClick={() => setMenuOpen(false)}>FAQ</a>
           <button onClick={onCTA} className="w-full py-3.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-black text-sm font-semibold mt-2">
-            Começar Grátis
+            Assinar Agora
           </button>
         </div>
       )}
