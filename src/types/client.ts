@@ -153,6 +153,9 @@ export interface Profile {
   phone: string | null;
   whatsapp: string | null;
   manager_id: string | null;
+  subscription_status: 'active' | 'pending' | 'canceled' | 'refunded' | null;
+  kiwify_order_id: string | null;
+  kiwify_payload: any | null;
   created_at: string;
   updated_at: string;
 }

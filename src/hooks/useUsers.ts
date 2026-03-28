@@ -174,3 +174,34 @@ export function useUpdateUserManager() {
     },
   });
 }
+
+export function useUpdateSubscriptionStatus() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ userId, status }: { userId: string; status: Profile['subscription_status'] }) => {
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .update({ subscription_status: status } as any)
+        .eq('user_id', userId);
+
+      if (profileError) throw profileError;
+
+      // If activating, ensure the role is set to 'corretor'
+      if (status === 'active') {
+        const { error: roleError } = await supabase
+          .from('user_roles')
+          .upsert({ user_id: userId, role: 'corretor' }, { onConflict: 'user_id' });
+        
+        if (roleError) throw roleError;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      toast.success('Status de assinatura atualizado!');
+    },
+    onError: (error: any) => {
+      toast.error('Erro ao atualizar assinatura: ' + error.message);
+    },
+  });
+}
