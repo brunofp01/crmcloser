@@ -74,7 +74,7 @@ export function LandingShowcase({ mobileImg }: LandingShowcaseProps) {
               {/* Backglow for the mockup */}
               <div className="absolute inset-0 bg-amber-500/10 rounded-3xl blur-3xl -z-10 animate-pulse" />
               
-              <div className="w-[280px] sm:w-[320px] relative z-20 group">
+              <div className="w-[320px] sm:w-[460px] relative z-20 group">
                 {/* Screen content - Using the asset directly since it already has a frame */}
                 <div className="relative transform group-hover:scale-[1.02] transition-transform duration-700 drop-shadow-[0_35px_60px_rgba(0,0,0,0.8)]">
                   <img
