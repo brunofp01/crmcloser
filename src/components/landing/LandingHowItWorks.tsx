@@ -7,7 +7,7 @@ const steps = [
     icon: UserPlus,
     step: '01',
     title: 'Crie sua conta',
-    desc: 'Cadastre-se em menos de 2 minutos. Sem burocracia, sem cartão.',
+    desc: 'Cadastre-se em menos de 2 minutos. É fácil e sem burocracia.',
   },
   {
     icon: Download,
@@ -62,9 +62,8 @@ export function LandingHowItWorks() {
               return (
                 <motion.div
                   key={i}
-                  className={`relative flex items-center gap-6 sm:gap-0 ${
-                    isRight ? 'sm:flex-row-reverse' : ''
-                  }`}
+                  className={`relative flex items-center gap-6 sm:gap-0 ${isRight ? 'sm:flex-row-reverse' : ''
+                    }`}
                   initial={{ opacity: 0, y: 30 }}
                   animate={inView ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.5, delay: i * 0.15 }}
