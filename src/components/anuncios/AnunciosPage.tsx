@@ -34,6 +34,7 @@ interface ZapListing {
 interface SearchParams {
   estado: string;
   cidade: string;
+  regiao: string;
   bairro: string;
 }
 
@@ -178,7 +179,7 @@ function AnuncioCard({ listing, source = 'zap' }: { listing: ZapListing; source?
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export function AnunciosPage() {
-  const [searchParams, setSearchParams] = useState<SearchParams>({ estado: 'mg', cidade: 'belo-horizonte', bairro: '' });
+  const [searchParams, setSearchParams] = useState<SearchParams>({ estado: 'mg', cidade: 'belo-horizonte', regiao: 'centro-sul', bairro: '' });
   const [provider, setProvider] = useState<'zap' | 'olx' | 'netimoveis'>('netimoveis');
   const [listings, setListings] = useState<ZapListing[]>([]);
   const [total, setTotal] = useState<number | null>(null);
@@ -217,6 +218,7 @@ export function AnunciosPage() {
         body: {
           estado: searchParams.estado,
           cidade: searchParams.cidade,
+          regiao: searchParams.regiao,
           bairro: searchParams.bairro,
           provider: provider,
         },
@@ -286,7 +288,7 @@ export function AnunciosPage() {
           </div>
         </div>
 
-        <form onSubmit={handleSearch} className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+        <form onSubmit={handleSearch} className="grid grid-cols-1 sm:grid-cols-5 gap-3">
           <div className="space-y-1">
             <Label className="text-xs">Fonte</Label>
             <select
@@ -318,6 +320,15 @@ export function AnunciosPage() {
             />
           </div>
           <div className="space-y-1">
+            <Label className="text-xs">Região / Zona</Label>
+            <Input
+              placeholder="Ex: centro-sul"
+              value={searchParams.regiao}
+              onChange={e => setSearchParams(p => ({ ...p, regiao: e.target.value }))}
+              className="h-9 text-sm"
+            />
+          </div>
+          <div className="space-y-1">
             <Label className="text-xs">Bairro</Label>
             <Input
               placeholder="Ex: lourdes"
@@ -326,7 +337,7 @@ export function AnunciosPage() {
               className="h-9 text-sm"
             />
           </div>
-          <div className="sm:col-span-4 flex justify-end gap-2">
+          <div className="sm:col-span-5 flex justify-end gap-2">
             {zapUrl && (
               <a
                 href={zapUrl}

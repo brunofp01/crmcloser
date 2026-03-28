@@ -19,7 +19,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { estado, cidade, bairro, pagina = 1, provider = 'zap' } = await req.json();
+    const { estado, cidade, bairro, regiao = '', pagina = 1, provider = 'zap' } = await req.json();
 
     if (!estado || !cidade || !bairro) {
       return new Response(
@@ -45,25 +45,32 @@ Deno.serve(async (req) => {
     const eSlug = normalise(estado);
     const cSlug = normalise(cidade);
     const bSlug = normalise(bairro);
+    const rSlug = normalise(regiao);
 
     let targetUrl = '';
     let prompt = '';
 
     if (provider === 'netimoveis') {
       const fullState = STATE_MAP[eSlug] || eSlug;
-      targetUrl = `https://www.netimoveis.com/venda/${fullState}/${cSlug}/${bSlug}?pagina=${pagina}`;
-      prompt = `Extract real estate listings from Netimoveis. Search results page. 
-      For each card extract: title, price (number), area (number), bedrooms, bathrooms, parking, neighborhood, city, state, url (absolute), image_url (absolute), type, suites.`;
+      const stateUpper = eSlug.toUpperCase();
+      
+      // If region is provided, use the complex URL, otherwise fallback to simple (which might fail but is better than nothing)
+      if (rSlug) {
+        // Pattern: https://www.netimoveis.com/venda/minas-gerais/belo-horizonte/centro-sul/lourdes?transacao=venda&localizacao=BR-MG-belo-horizonte-lourdes-centro-sul-&pagina=1
+        targetUrl = `https://www.netimoveis.com/venda/${fullState}/${cSlug}/${rSlug}/${bSlug}?transacao=venda&localizacao=BR-${stateUpper}-${cSlug}-${bSlug}-${rSlug}-&pagina=${pagina}`;
+      } else {
+        targetUrl = `https://www.netimoveis.com/venda/${fullState}/${cSlug}/${bSlug}?pagina=${pagina}`;
+      }
+      
+      prompt = `Extract ALL real estate listings from this page. 
+      For each listing card extract: title, price (absolute number), area (number), bedrooms, bathrooms, parking, neighborhood, city, state, url (absolute), image_url (absolute), type and suites.`;
     } else if (provider === 'olx') {
       targetUrl = `https://www.olx.com.br/imoveis/venda/estado-${eSlug}/${cSlug}/${bSlug}?o=${pagina}`;
-      prompt = `Extract real estate listings from OLX Brazil. Look for property cards in the search results.
-      CRITICAL: Some listings are at the top as 'Destaques' or 'Ads'. Extract ALL.
-      Each card has title, price, bedrooms, area, neighborhood, city, state, url, image_url.`;
+      prompt = `Extract all property listings from OLX search results grid. Extract: title, price, area, bedrooms, neighborhood, city, state, url, image_url.`;
     } else {
       // Default: Zap
       targetUrl = `https://www.zapimoveis.com.br/venda/imoveis/${eSlug}+${cSlug}++${bSlug}/?pagina=${pagina}`;
-      prompt = `Extract real estate listing data from a Zap Imóveis SEARCH RESULTS page.
-      Extract: title, price (number), area (number), bedrooms, bathrooms, parking, neighborhood, city, state, url (absolute), image_url (absolute), type, suites.`;
+      prompt = `Extract all property cards from Zap Imóveis search results. Extract: title, price, area, bedrooms, bathrooms, parking, neighborhood, city, state, url, image_url, type, suites.`;
     }
 
     console.log(`Scraping ${provider} URL:`, targetUrl);
@@ -78,9 +85,9 @@ Deno.serve(async (req) => {
         url: targetUrl,
         formats: ['extract'],
         onlyMainContent: false,
-        waitFor: provider === 'netimoveis' ? 3000 : 8000,
+        waitFor: 8000,
         timeout: 90000,
-        actions: provider === 'netimoveis' ? [] : [
+        actions: (provider === 'netimoveis' && rSlug) ? [] : [
           { type: 'wait', milliseconds: 2000 },
           { type: 'scroll', direction: 'down', amount: 500 },
           { type: 'wait', milliseconds: 2000 },
