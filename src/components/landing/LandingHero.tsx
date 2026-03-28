@@ -17,7 +17,7 @@ export function LandingHero({ logo, dashboardImg, mobileImg, onCTA }: LandingHer
         <div className="absolute top-10 right-[-10%] w-[500px] h-[500px] bg-amber-600/[0.02] rounded-full blur-[140px]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,transparent_0%,#050505_75%)]" />
       </div>
-      
+
       {/* Subtle grid */}
       <div className="absolute inset-0 opacity-[0.02]" style={{
         backgroundImage: 'linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px)',
@@ -26,7 +26,7 @@ export function LandingHero({ logo, dashboardImg, mobileImg, onCTA }: LandingHer
 
       <div className="relative max-w-7xl mx-auto">
         {/* Badge */}
-        <motion.div 
+        <motion.div
           className="flex justify-center mb-10"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -35,23 +35,23 @@ export function LandingHero({ logo, dashboardImg, mobileImg, onCTA }: LandingHer
           <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full border border-amber-500/15 bg-amber-500/[0.04]">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
             <span className="text-[11px] font-medium text-amber-400/80 tracking-[0.15em] uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>
-              Performance Máxima • Contratação Online
+              Performance Máxima • IA Integrada
             </span>
           </div>
         </motion.div>
 
         {/* Headline */}
-        <motion.div 
+        <motion.div
           className="text-center max-w-5xl mx-auto mb-8"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1 }}
         >
-          <h1 
+          <h1
             className="text-4xl sm:text-5xl lg:text-[4.5rem] font-extrabold leading-[1.05] tracking-[-0.03em] mb-7"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >
-            O CRM que{' '}
+            O CRM com IA que{' '}
             <span className="relative inline-block">
               <span className="relative z-10 bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 bg-clip-text text-transparent">
                 transforma
@@ -65,18 +65,18 @@ export function LandingHero({ logo, dashboardImg, mobileImg, onCTA }: LandingHer
               top performers
             </span>
           </h1>
-          <p 
+          <p
             className="text-base sm:text-lg text-gray-400 max-w-2xl mx-auto leading-relaxed font-light"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
-            Gerencie clientes, imóveis e negociações em uma plataforma inteligente 
+            Gerencie clientes, imóveis e negociações em uma plataforma inteligente
             com IA integrada. Saia da planilha e comece a{' '}
             <span className="text-gray-200 font-medium">fechar mais vendas</span>.
           </p>
         </motion.div>
 
         {/* CTAs */}
-        <motion.div 
+        <motion.div
           className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-16 sm:mb-24"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -101,7 +101,7 @@ export function LandingHero({ logo, dashboardImg, mobileImg, onCTA }: LandingHer
         </motion.div>
 
         {/* Dashboard composition with 3D perspective */}
-        <motion.div 
+        <motion.div
           className="relative mx-auto max-w-5xl"
           initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
@@ -109,7 +109,7 @@ export function LandingHero({ logo, dashboardImg, mobileImg, onCTA }: LandingHer
         >
           {/* Ambient glow behind dashboard */}
           <div className="absolute -inset-8 bg-gradient-to-t from-amber-500/[0.08] via-amber-500/[0.04] to-transparent rounded-3xl blur-3xl" />
-          
+
           {/* Main dashboard with perspective */}
           <div className="relative rounded-xl overflow-hidden border border-white/[0.06] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)]" style={{ perspective: '1200px' }}>
             {/* macOS title bar */}
@@ -146,7 +146,7 @@ export function LandingHero({ logo, dashboardImg, mobileImg, onCTA }: LandingHer
           </div>
 
           {/* Floating stat cards */}
-          <motion.div 
+          <motion.div
             className="absolute -left-2 sm:-left-8 top-1/4 z-20 hidden sm:block"
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
@@ -159,7 +159,7 @@ export function LandingHero({ logo, dashboardImg, mobileImg, onCTA }: LandingHer
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             className="absolute -right-2 sm:-right-8 top-8 z-20 hidden sm:block"
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
