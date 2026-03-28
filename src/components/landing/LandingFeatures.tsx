@@ -55,7 +55,7 @@ export function LandingFeatures() {
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
 
   return (
-    <section id="funcionalidades" ref={ref} className="py-24 sm:py-32 px-4 scroll-mt-20">
+    <section id="funcionalidades" ref={ref} className="py-12 sm:py-20 px-4 scroll-mt-20">
       <div className="max-w-6xl mx-auto">
         <motion.div
           className="text-center mb-16"

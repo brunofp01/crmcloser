@@ -14,7 +14,7 @@ export function LandingSocialProof() {
   const inView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
-    <section ref={ref} className="relative py-14 border-y border-white/[0.04]">
+    <section ref={ref} className="relative py-8 border-y border-white/[0.04]">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex flex-wrap items-center justify-center gap-0">
           {stats.map((s, i) => (

@@ -33,7 +33,7 @@ export function LandingFAQ() {
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
   return (
-    <section id="faq" ref={ref} className="py-24 sm:py-32 px-4 scroll-mt-20">
+    <section id="faq" ref={ref} className="py-12 sm:py-20 px-4 scroll-mt-20">
       <div className="max-w-2xl mx-auto">
         <motion.div
           className="text-center mb-14"

@@ -24,7 +24,7 @@ export function LandingPricing({ onCTA }: LandingPricingProps) {
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
   return (
-    <section id="preco" ref={ref} className="py-24 sm:py-32 px-4 scroll-mt-20 relative">
+    <section id="preco" ref={ref} className="py-12 sm:py-20 px-4 scroll-mt-20 relative">
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-amber-500/[0.04] rounded-full blur-[180px]" />
       </div>

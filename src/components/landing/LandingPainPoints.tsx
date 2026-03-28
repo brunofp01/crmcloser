@@ -16,7 +16,7 @@ export function LandingPainPoints() {
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
   return (
-    <section ref={ref} className="py-24 sm:py-32 px-4">
+    <section ref={ref} className="py-12 sm:py-20 px-4">
       <div className="max-w-5xl mx-auto">
         <motion.div
           className="text-center mb-16"

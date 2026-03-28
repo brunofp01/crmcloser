@@ -28,7 +28,7 @@ export function LandingHowItWorks() {
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
   return (
-    <section ref={ref} className="py-24 sm:py-32 px-4 relative">
+    <section ref={ref} className="py-12 sm:py-20 px-4 relative">
       <div className="relative max-w-4xl mx-auto">
         <motion.div
           className="text-center mb-16"

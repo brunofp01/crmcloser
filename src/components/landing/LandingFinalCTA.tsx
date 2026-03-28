@@ -11,7 +11,7 @@ export function LandingFinalCTA({ onCTA }: LandingFinalCTAProps) {
   const inView = useInView(ref, { once: true, margin: '-80px' });
 
   return (
-    <section ref={ref} className="py-28 sm:py-36 px-4 relative overflow-hidden">
+    <section ref={ref} className="py-16 sm:py-24 px-4 relative overflow-hidden">
       <div className="absolute inset-0">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[450px] bg-amber-500/[0.06] rounded-full blur-[180px]" />
       </div>

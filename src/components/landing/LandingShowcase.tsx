@@ -13,7 +13,7 @@ export function LandingShowcase({ mobileImg }: LandingShowcaseProps) {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="plataforma" ref={ref} className="py-24 sm:py-32 px-4 scroll-mt-20 relative overflow-hidden">
+    <section id="plataforma" ref={ref} className="py-12 sm:py-20 px-4 scroll-mt-20 relative overflow-hidden">
       {/* Background glow elements */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-amber-500/[0.03] rounded-full blur-[150px] pointer-events-none" />
       
