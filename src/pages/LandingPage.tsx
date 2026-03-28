@@ -17,6 +17,7 @@ import { LandingPricing } from '@/components/landing/LandingPricing';
 import { LandingFAQ } from '@/components/landing/LandingFAQ';
 import { LandingFinalCTA } from '@/components/landing/LandingFinalCTA';
 import { LandingFooter } from '@/components/landing/LandingFooter';
+import { LandingWhatsApp } from '@/components/landing/LandingWhatsApp';
 
 export default function LandingPage() {
   const navigate = useNavigate();
@@ -55,6 +56,7 @@ export default function LandingPage() {
       <LandingFAQ />
       <LandingFinalCTA onCTA={handleCTA} />
       <LandingFooter logo={logo} />
+      <LandingWhatsApp />
     </div>
   );
 }
