@@ -20,6 +20,7 @@ import { LancamentosPage } from '@/components/lancamentos/LancamentosPage';
 import { LancamentoDetail } from '@/components/lancamentos/LancamentoDetail';
 import { NewLancamentoForm } from '@/components/lancamentos/NewLancamentoForm';
 import { AnunciosPage } from '@/components/anuncios/AnunciosPage';
+import { SubscribersPage } from '@/components/users/SubscribersPage';
 import { InstallPrompt } from '@/components/pwa/InstallPrompt';
 import { PushNotificationPrompt } from '@/components/pwa/PushNotificationPrompt';
 import { Client } from '@/types/client';
@@ -40,6 +41,7 @@ const viewTitles: Record<string, { title: string; subtitle?: string }> = {
   lancamentos: { title: 'Lançamentos', subtitle: 'Empreendimentos de construtoras' },
   anuncios: { title: 'Imóveis de Anúncios', subtitle: 'Busque anúncios em tempo real no Zap Imóveis' },
   users: { title: 'Usuários', subtitle: 'Gerencie os usuários do sistema' },
+  subscribers: { title: 'Assinantes', subtitle: 'Gestão de assinaturas e pagamentos' },
   notifications: { title: 'Notificações', subtitle: 'Suas notificações e lembretes' },
   profile: { title: 'Meu Perfil', subtitle: 'Gerencie suas informações pessoais' },
 };
@@ -53,6 +55,7 @@ const pathToView: Record<string, string> = {
   '/lancamentos': 'lancamentos',
   '/anuncios': 'anuncios',
   '/users': 'users',
+  '/subscribers': 'subscribers',
   '/notifications': 'notifications',
   '/profile': 'profile',
 };
@@ -110,7 +113,7 @@ const Index = () => {
       setShowNewDealForm(true);
     } else if (view === 'new-lancamento') {
       setShowNewLancamentoForm(true);
-    } else if (['users'].includes(view) && !isMaster) {
+    } else if (['users', 'subscribers'].includes(view) && !isMaster) {
       return;
     } else {
       navigate(`/${view}`);
@@ -137,6 +140,8 @@ const Index = () => {
         return <AnunciosPage />;
       case 'users':
         return <UserManagement />;
+      case 'subscribers':
+        return <SubscribersPage />;
       case 'notifications':
         return <NotificationsPage />;
       case 'profile':

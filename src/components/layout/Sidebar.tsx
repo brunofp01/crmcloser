@@ -6,6 +6,7 @@ import logo from '@/assets/closer-logo.png';
 import {
   LayoutDashboard, Users, Settings, ChevronLeft, ChevronRight,
   UserPlus, Bell, LogOut, Building2, ClipboardList, Landmark, Building, Globe,
+  CreditCard,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -26,7 +27,10 @@ export function Sidebar({ activeView, onViewChange }: SidebarProps) {
     { id: 'tasks', label: 'Tarefas', icon: ClipboardList },
     { id: 'lancamentos', label: 'Lançamentos', icon: Building },
     { id: 'anuncios', label: 'Anúncios', icon: Globe },
-    ...(isMaster ? [{ id: 'users', label: 'Usuários', icon: Settings }] : []),
+    ...(isMaster ? [
+      { id: 'users', label: 'Usuários', icon: Settings },
+      { id: 'subscribers', label: 'Assinantes', icon: CreditCard }
+    ] : []),
   ];
 
   const bottomItems = [

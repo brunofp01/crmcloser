@@ -30,7 +30,7 @@ export default function LandingPage() {
   }, [user, loading, navigate]);
 
   const handleCTA = () => {
-    navigate('/dashboard');
+    navigate('/register-subscription');
   };
 
   return (
