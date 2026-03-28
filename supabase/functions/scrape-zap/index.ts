@@ -19,7 +19,10 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { estado, cidade, bairro, regiao = '', pagina = 1, provider = 'zap' } = await req.json();
+    const { 
+      estado, cidade, bairro, regiao = '', pagina = 1, provider = 'zap',
+      quartos = '', vagas = '', area = '', valor_max = ''
+    } = await req.json();
 
     if (!estado || !cidade || !bairro) {
       return new Response(
@@ -48,29 +51,27 @@ Deno.serve(async (req) => {
     const rSlug = normalise(regiao);
 
     let targetUrl = '';
-    let prompt = '';
+    let providerPrompt = '';
 
     if (provider === 'netimoveis') {
       const fullState = STATE_MAP[eSlug] || eSlug;
       const stateUpper = eSlug.toUpperCase();
       
-      // If region is provided, use the complex URL, otherwise fallback to simple (which might fail but is better than nothing)
       if (rSlug) {
-        // Pattern: https://www.netimoveis.com/venda/minas-gerais/belo-horizonte/centro-sul/lourdes?transacao=venda&localizacao=BR-MG-belo-horizonte-lourdes-centro-sul-&pagina=1
         targetUrl = `https://www.netimoveis.com/venda/${fullState}/${cSlug}/${rSlug}/${bSlug}?transacao=venda&localizacao=BR-${stateUpper}-${cSlug}-${bSlug}-${rSlug}-&pagina=${pagina}`;
       } else {
         targetUrl = `https://www.netimoveis.com/venda/${fullState}/${cSlug}/${bSlug}?pagina=${pagina}`;
       }
-      
-      prompt = `Extract ALL real estate listings from this page. 
-      For each listing card extract: title, price (absolute number), area (number), bedrooms, bathrooms, parking, neighborhood, city, state, url (absolute), image_url (absolute), type and suites.`;
+      providerPrompt = `Extract from Netimóveis. Use these criteria: ${quartos ? quartos + ' bedrooms min,' : ''} ${vagas ? vagas + ' parking min,' : ''} ${area ? area + ' area min,' : ''} ${valor_max ? 'price max ' + valor_max : ''}.`;
+
     } else if (provider === 'olx') {
       targetUrl = `https://www.olx.com.br/imoveis/venda/estado-${eSlug}/${cSlug}/${bSlug}?o=${pagina}`;
-      prompt = `Extract all property listings from OLX search results grid. Extract: title, price, area, bedrooms, neighborhood, city, state, url, image_url.`;
+      providerPrompt = `Extract from OLX. Keep only items matching: ${quartos ? 'min ' + quartos + ' bedrooms,' : ''} ${valor_max ? 'max price ' + valor_max : ''}.`;
+
     } else {
-      // Default: Zap
+      // Zap
       targetUrl = `https://www.zapimoveis.com.br/venda/imoveis/${eSlug}+${cSlug}++${bSlug}/?pagina=${pagina}`;
-      prompt = `Extract all property cards from Zap Imóveis search results. Extract: title, price, area, bedrooms, bathrooms, parking, neighborhood, city, state, url, image_url, type, suites.`;
+      providerPrompt = `Extract from Zap Imóveis. Criteria: ${quartos ? quartos + ' bedrooms,' : ''} ${vagas ? vagas + ' parking,' : ''} ${valor_max ? 'max price ' + valor_max : ''}.`;
     }
 
     console.log(`Scraping ${provider} URL:`, targetUrl);
@@ -121,7 +122,8 @@ Deno.serve(async (req) => {
               total_results: { type: 'number' },
             },
           },
-          prompt: prompt,
+          prompt: `${providerPrompt} Extract ALL real estate listings from this page. 
+          For each listing card extract: title, price (absolute number), area (number), bedrooms, bathrooms, parking, neighborhood, city, state, url (absolute), image_url (absolute), type and suites.`,
         },
       }),
     });

@@ -36,7 +36,22 @@ interface SearchParams {
   cidade: string;
   regiao: string;
   bairro: string;
+  quartos: string;
+  vagas: string;
+  metragem: string;
+  valorMax: string;
 }
+
+const normalizeSlug = (val: string) => {
+  if (!val) return '';
+  return val
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove accents
+    .replace(/\s+/g, '-')           // Spaces to hyphens
+    .replace(/[^a-z0-9-]/g, '');    // Remove special chars
+};
 
 interface Filters {
   quartosMin: string;
@@ -179,11 +194,20 @@ function AnuncioCard({ listing, source = 'zap' }: { listing: ZapListing; source?
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export function AnunciosPage() {
-  const [searchParams, setSearchParams] = useState<SearchParams>({ estado: 'mg', cidade: 'belo-horizonte', regiao: 'centro-sul', bairro: '' });
+  const [searchParams, setSearchParams] = useState<SearchParams>({ 
+    estado: 'MG', 
+    cidade: 'Belo Horizonte', 
+    regiao: 'Centro-Sul', 
+    bairro: 'Lourdes',
+    quartos: '',
+    vagas: '',
+    metragem: '',
+    valorMax: ''
+  });
   const [provider, setProvider] = useState<'zap' | 'olx' | 'netimoveis'>('netimoveis');
   const [listings, setListings] = useState<ZapListing[]>([]);
   const [total, setTotal] = useState<number | null>(null);
-  const [zapUrl, setZapUrl] = useState<string | null>(null);
+  const [targetUrl, setTargetUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
@@ -216,10 +240,14 @@ export function AnunciosPage() {
     try {
       const { data, error: fnError } = await supabase.functions.invoke('scrape-zap', {
         body: {
-          estado: searchParams.estado,
-          cidade: searchParams.cidade,
-          regiao: searchParams.regiao,
-          bairro: searchParams.bairro,
+          estado: normalizeSlug(searchParams.estado),
+          cidade: normalizeSlug(searchParams.cidade),
+          regiao: normalizeSlug(searchParams.regiao),
+          bairro: normalizeSlug(searchParams.bairro),
+          quartos: searchParams.quartos,
+          vagas: searchParams.vagas,
+          area: searchParams.metragem,
+          valor_max: searchParams.valorMax,
           provider: provider,
         },
       });
@@ -239,7 +267,7 @@ export function AnunciosPage() {
       const listings = data.data?.listings || [];
       setListings(listings);
       setTotal(data.data?.total ?? null);
-      setZapUrl(data.data?.url ?? null);
+      setTargetUrl(data.data?.url ?? null);
 
       if (listings.length === 0) {
         console.warn('[AnunciosPage] Scraping retornou 0 imóveis. URL usada:', data.data?.url);
@@ -280,93 +308,127 @@ export function AnunciosPage() {
       <div className="card-elevated p-4 space-y-4">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg gradient-gold flex items-center justify-center flex-shrink-0">
-            <Globe className="w-4 h-4 text-white" />
+            <Search className="w-4 h-4 text-white" />
           </div>
           <div>
-            <h2 className="text-sm font-semibold text-foreground">Buscar Anúncios no Zap Imóveis</h2>
-            <p className="text-xs text-muted-foreground">Informe o Estado, Cidade e Bairro para pesquisar</p>
+            <h2 className="text-sm font-semibold text-foreground">Buscando Imóveis nos Portais</h2>
+            <p className="text-xs text-muted-foreground">Otimizando a pesquisa em tempo real</p>
           </div>
         </div>
 
-        <form onSubmit={handleSearch} className="grid grid-cols-1 sm:grid-cols-5 gap-3">
-          <div className="space-y-1">
-            <Label className="text-xs">Fonte</Label>
-            <select
-              value={provider}
-              onChange={e => setProvider(e.target.value as any)}
-              className="w-full h-9 px-3 rounded-md border border-input bg-background text-sm focus:ring-1 focus:ring-accent outline-none"
-            >
-              <option value="netimoveis">Netimóveis (Garantido)</option>
-              <option value="zap">Zap Imóveis (Beta)</option>
-              <option value="olx">OLX (Beta)</option>
-            </select>
-          </div>
-          <div className="space-y-1">
-            <Label className="text-xs">Estado (UF)</Label>
-            <Input
-              placeholder="Ex: mg"
-              value={searchParams.estado}
-              onChange={e => setSearchParams(p => ({ ...p, estado: e.target.value }))}
-              className="h-9 text-sm"
-            />
-          </div>
-          <div className="space-y-1">
-            <Label className="text-xs">Cidade</Label>
-            <Input
-              placeholder="Ex: belo-horizonte"
-              value={searchParams.cidade}
-              onChange={e => setSearchParams(p => ({ ...p, cidade: e.target.value }))}
-              className="h-9 text-sm"
-            />
-          </div>
-          <div className="space-y-1">
-            <Label className="text-xs">Região / Zona</Label>
-            <Input
-              placeholder="Ex: centro-sul"
-              value={searchParams.regiao}
-              onChange={e => setSearchParams(p => ({ ...p, regiao: e.target.value }))}
-              className="h-9 text-sm"
-            />
-          </div>
-          <div className="space-y-1">
-            <Label className="text-xs">Bairro</Label>
-            <Input
-              placeholder="Ex: lourdes"
-              value={searchParams.bairro}
-              onChange={e => setSearchParams(p => ({ ...p, bairro: e.target.value }))}
-              className="h-9 text-sm"
-            />
-          </div>
-          <div className="sm:col-span-5 flex justify-end gap-2">
-            {zapUrl && (
-              <a
-                href={zapUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 px-3 py-2 rounded-md text-xs font-medium border border-border text-muted-foreground hover:bg-secondary transition-colors"
+        <form onSubmit={handleSearch} className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+            <div className="space-y-1">
+              <Label className="text-xs">Fonte</Label>
+              <select
+                value={provider}
+                onChange={e => setProvider(e.target.value as any)}
+                className="w-full h-9 px-3 rounded-md border border-input bg-background text-sm focus:ring-1 focus:ring-accent outline-none"
               >
-                <ExternalLink className="w-3.5 h-3.5" />
-                Ver no Site
-              </a>
-            )}
-            <Button
-              type="submit"
-              disabled={isLoading || !searchParams.estado || !searchParams.cidade || !searchParams.bairro}
-              className="gradient-gold text-white gap-2"
-            >
-              {isLoading ? (
-                <><Loader2 className="w-4 h-4 animate-spin" /> Buscando...</>
-              ) : (
-                <><Search className="w-4 h-4" /> Buscar Anúncios</>
-              )}
-            </Button>
+                <option value="netimoveis">Netimóveis (Garantido)</option>
+                <option value="zap">Zap Imóveis (Beta)</option>
+                <option value="olx">OLX (Beta)</option>
+              </select>
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Estado (UF)</Label>
+              <Input
+                placeholder="Ex: MG"
+                value={searchParams.estado}
+                onChange={e => setSearchParams(p => ({ ...p, estado: e.target.value }))}
+                className="h-9 text-sm"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Cidade</Label>
+              <Input
+                placeholder="Ex: Belo Horizonte"
+                value={searchParams.cidade}
+                onChange={e => setSearchParams(p => ({ ...p, cidade: e.target.value }))}
+                className="h-9 text-sm"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Região / Zona</Label>
+              <Input
+                placeholder="Ex: Centro-Sul"
+                value={searchParams.regiao}
+                onChange={e => setSearchParams(p => ({ ...p, regiao: e.target.value }))}
+                className="h-9 text-sm"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Bairro</Label>
+              <Input
+                placeholder="Ex: Lourdes"
+                value={searchParams.bairro}
+                onChange={e => setSearchParams(p => ({ ...p, bairro: e.target.value }))}
+                className="h-9 text-sm"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-2 border-t border-border/50">
+            <div className="space-y-1">
+              <Label className="text-xs">Quartos mín</Label>
+              <Input
+                type="number"
+                placeholder="Ex: 3"
+                value={searchParams.quartos}
+                onChange={e => setSearchParams(p => ({ ...p, quartos: e.target.value }))}
+                className="h-9 text-sm"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Vagas mín</Label>
+              <Input
+                type="number"
+                placeholder="Ex: 2"
+                value={searchParams.vagas}
+                onChange={e => setSearchParams(p => ({ ...p, vagas: e.target.value }))}
+                className="h-9 text-sm"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Metragem mín (m²)</Label>
+              <Input
+                type="number"
+                placeholder="Ex: 80"
+                value={searchParams.metragem}
+                onChange={e => setSearchParams(p => ({ ...p, metragem: e.target.value }))}
+                className="h-9 text-sm"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">Valor Máx (R$)</Label>
+              <Input
+                type="number"
+                placeholder="Ex: 1500000"
+                value={searchParams.valorMax}
+                onChange={e => setSearchParams(p => ({ ...p, valorMax: e.target.value }))}
+                className="h-9 text-sm"
+              />
+            </div>
+            <div className="flex items-end">
+              <Button
+                type="submit"
+                disabled={isLoading || !searchParams.estado || !searchParams.cidade || !searchParams.bairro}
+                className="w-full gradient-gold text-white gap-2 h-9"
+              >
+                {isLoading ? (
+                  <><Loader2 className="w-4 h-4 animate-spin" /> Buscando...</>
+                ) : (
+                  <><Search className="w-4 h-4" /> Buscar Anúncios</>
+                )}
+              </Button>
+            </div>
           </div>
         </form>
 
         {/* URL hint */}
-        {(searchParams.estado && searchParams.cidade && searchParams.bairro) && (
+        {targetUrl && (
           <p className="text-[10px] text-muted-foreground font-mono bg-secondary/50 rounded px-2 py-1 break-all">
-            zapimoveis.com.br/venda/imoveis/{searchParams.estado}+{searchParams.cidade}++{searchParams.bairro}/
+            Link da pesquisa: {targetUrl}
           </p>
         )}
       </div>
@@ -472,8 +534,8 @@ export function AnunciosPage() {
             <div className="flex flex-col items-center justify-center h-64 gap-3 text-center">
               <Loader2 className="w-8 h-8 animate-spin text-accent" />
               <div>
-                <p className="text-sm font-medium text-foreground">Buscando anúncios no Zap Imóveis...</p>
-                <p className="text-xs text-muted-foreground mt-1">Isso pode levar alguns segundos</p>
+                <p className="text-sm font-medium text-foreground">Buscando e processando anúncios...</p>
+                <p className="text-xs text-muted-foreground mt-1">Extraindo dados em tempo real</p>
               </div>
             </div>
           )}
@@ -516,7 +578,7 @@ export function AnunciosPage() {
               <Building2 className="w-12 h-12 text-muted-foreground/30" />
               <div>
                 <p className="text-sm font-medium text-foreground">Nenhum anúncio encontrado</p>
-                <p className="text-xs text-muted-foreground mt-1">Tente outro bairro ou cidade</p>
+                <p className="text-xs text-muted-foreground mt-1">Refinando a busca ou mudando o portal</p>
               </div>
             </div>
           )}
@@ -531,17 +593,17 @@ export function AnunciosPage() {
                     <span className="text-xs ml-1">(de {total.toLocaleString('pt-BR')} no total)</span>
                   )}
                 </p>
-                {zapUrl && (
-                  <a
-                    href={zapUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-accent hover:underline flex items-center gap-1"
-                  >
-                    Ver todos no Zap <ExternalLink className="w-3 h-3" />
-                  </a>
-                )}
-              </div>
+                  {targetUrl && (
+                    <a
+                      href={targetUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-accent hover:underline flex items-center gap-1"
+                    >
+                      Ver todos no portal <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
 
               {filteredListings.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-40 text-center">
