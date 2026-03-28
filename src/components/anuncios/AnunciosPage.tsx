@@ -286,7 +286,7 @@ export function AnunciosPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+        <form onSubmit={handleSearch} className="grid grid-cols-1 sm:grid-cols-4 gap-3">
           <div className="space-y-1">
             <Label className="text-xs">Fonte</Label>
             <select
@@ -350,7 +350,7 @@ export function AnunciosPage() {
               )}
             </Button>
           </div>
-        </div>
+        </form>
 
         {/* URL hint */}
         {(searchParams.estado && searchParams.cidade && searchParams.bairro) && (
