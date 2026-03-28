@@ -9,6 +9,7 @@ import { queryClient } from "@/lib/queryClient";
 import Index from "./pages/Index";
 import LandingPage from "./pages/LandingPage";
 import { RegisterSubscriptionPage } from "./pages/RegisterSubscriptionPage";
+import { ResetPasswordPage } from "./pages/ResetPasswordPage";
 import NotFound from "./pages/NotFound";
 
 const App = () => (
@@ -22,6 +23,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/register-subscription" element={<RegisterSubscriptionPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/dashboard" element={<Index />} />
             <Route path="/deals" element={<Index />} />
             <Route path="/clients" element={<Index />} />

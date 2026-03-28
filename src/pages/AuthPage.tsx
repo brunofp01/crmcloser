@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import logo from '@/assets/closer-logo.png';
 import { Loader2, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 const loginSchema = z.object({
@@ -26,6 +27,7 @@ type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 export function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const navigate = useNavigate();
   const { signIn } = useAuth();
 
   const loginForm = useForm<LoginFormData>({
@@ -197,8 +199,14 @@ export function AuthPage() {
                   </button>
                 </div>
 
-                <p className="mt-4 text-center text-xs text-muted-foreground">
-                  Não tem acesso? Contate o administrador do sistema.
+                <p className="mt-4 text-center text-xs text-muted-foreground leading-relaxed">
+                  Ainda não tem acesso ao Closer CRM? <br />
+                  <button 
+                    onClick={() => navigate('/register-subscription')}
+                    className="text-accent hover:underline font-bold mt-1"
+                  >
+                    Assinar Agora
+                  </button>
                 </p>
               </>
             )}
