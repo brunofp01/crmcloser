@@ -127,6 +127,7 @@ export function LandingHero({ logo, dashboardImg, mobileImg, onCTA }: LandingHer
               alt="Closer CRM Dashboard - Funil de vendas inteligente"
               className="w-full h-auto"
               loading="eager"
+              decoding="async"
             />
           </div>
 
@@ -139,6 +140,7 @@ export function LandingHero({ logo, dashboardImg, mobileImg, onCTA }: LandingHer
                 alt="Closer CRM Mobile"
                 className="relative w-full h-auto drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)]"
                 loading="eager"
+                decoding="async"
               />
             </div>
           </div>

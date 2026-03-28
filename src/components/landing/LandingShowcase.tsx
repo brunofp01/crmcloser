@@ -82,6 +82,7 @@ export function LandingShowcase({ mobileImg }: LandingShowcaseProps) {
                     alt="Closer CRM Mobile Dashboard"
                     className="w-full h-auto"
                     loading="lazy"
+                    decoding="async"
                   />
                   {/* Subtle glass reflection overlay */}
                   <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-transparent opacity-30 pointer-events-none rounded-[2rem]" />
