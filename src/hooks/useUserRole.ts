@@ -9,26 +9,41 @@ export function useUserRole() {
 
   return useQuery({
     queryKey: ['user-role', user?.id],
-    queryFn: async (): Promise<{ isMaster: boolean; isGerente: boolean; role: AppRole }> => {
-      if (!user) return { isMaster: false, isGerente: false, role: 'corretor' };
+    queryFn: async (): Promise<{ isMaster: boolean; isGerente: boolean; role: AppRole; subscriptionStatus: string }> => {
+      if (!user) return { isMaster: false, isGerente: false, role: 'corretor', subscriptionStatus: 'none' };
 
-      const { data, error } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', user.id)
-        .maybeSingle();
+      const [{ data: roleData }, { data: profile }] = await Promise.all([
+        supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', user.id)
+          .maybeSingle(),
+        supabase
+          .from('profiles')
+          .select('subscription_status')
+          .eq('user_id', user.id)
+          .maybeSingle()
+      ]);
 
-      if (error || !data) {
+      const subscriptionStatus = profile?.subscription_status || 'pending';
+
+      if (!roleData) {
         // Fallback to email check for master
         const isMaster = user.email === 'brunofp01@gmail.com';
-        return { isMaster, isGerente: false, role: isMaster ? 'master' : 'corretor' };
+        return { 
+          isMaster, 
+          isGerente: false, 
+          role: isMaster ? 'master' : 'corretor',
+          subscriptionStatus
+        };
       }
 
-      const role = data.role as AppRole;
+      const role = roleData.role as AppRole;
       return {
         isMaster: role === 'master',
         isGerente: role === 'gerente',
         role,
+        subscriptionStatus
       };
     },
     enabled: !!user,

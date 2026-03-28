@@ -27,8 +27,9 @@ import { Client } from '@/types/client';
 import { DealWithClients } from '@/types/deal';
 import { Lancamento } from '@/hooks/useLancamentos';
 import { useAuth } from '@/contexts/AuthContext';
-import { useIsMaster } from '@/hooks/useUserRole';
+import { useUserRole } from '@/hooks/useUserRole';
 import { AuthPage } from '@/pages/AuthPage';
+import { WaitingActivation } from '@/components/auth/WaitingActivation';
 import { Loader2 } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -62,7 +63,9 @@ const pathToView: Record<string, string> = {
 
 const Index = () => {
   const { user, loading } = useAuth();
-  const isMaster = useIsMaster();
+  const { data: roleData, isLoading: isRoleLoading } = useUserRole();
+  const isMaster = roleData?.isMaster ?? false;
+  const subscriptionStatus = roleData?.subscriptionStatus ?? 'pending';
   const location = useLocation();
   const navigate = useNavigate();
   const activeView = pathToView[location.pathname] || 'dashboard';
@@ -94,7 +97,7 @@ const Index = () => {
     }
   }, [activeView]);
 
-  if (loading) {
+  if (loading || isRoleLoading) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
         <Loader2 className="w-8 h-8 animate-spin text-accent" />
@@ -104,6 +107,11 @@ const Index = () => {
 
   if (!user) {
     return <AuthPage />;
+  }
+
+  // Guard for subscription activation
+  if (!isMaster && subscriptionStatus !== 'active') {
+    return <WaitingActivation />;
   }
 
   const handleViewChange = (view: string) => {

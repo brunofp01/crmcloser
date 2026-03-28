@@ -51,7 +51,7 @@ export function RegisterSubscriptionPage() {
         
         // 3. Redirect to Kiwify with pre-filled billing info
         // Replace 'YOUR_PRODUCT_ID' with the actual ID from the user later
-        const kiwifyProductUrl = "https://pay.kiwify.com.br/YOUR_PRODUCT_ID";
+        const kiwifyProductUrl = "https://pay.kiwify.com.br/arODqm7";
         const redirectUrl = `${kiwifyProductUrl}?name=${encodeURIComponent(data.fullName)}&email=${encodeURIComponent(data.email)}`;
         
         // Small delay to allow toast to be seen
