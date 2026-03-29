@@ -34,8 +34,19 @@ export default function LandingPage() {
   };
 
   const handleSubscribe = () => {
+    // Track clicking the subscription button
+    import('@/lib/meta-pixel').then(({ trackPixelEvent, MetaEvents }) => {
+      trackPixelEvent(MetaEvents.INITIATE_CHECKOUT);
+    });
     navigate('/register-subscription');
   };
+
+  useEffect(() => {
+    // Track page view content
+    import('@/lib/meta-pixel').then(({ trackPixelEvent, MetaEvents }) => {
+      trackPixelEvent(MetaEvents.VIEW_CONTENT);
+    });
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#050505] text-white overflow-x-hidden">

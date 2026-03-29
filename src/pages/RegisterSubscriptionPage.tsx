@@ -44,13 +44,17 @@ export function RegisterSubscriptionPage() {
       if (authError) throw authError;
 
       if (authData.user) {
-        // 2. The profile is usually created via a trigger, 
-        // but we'll ensure the status is 'pending' (migration handles default)
-        
+        // Track Lead event
+        import('@/lib/meta-pixel').then(({ trackPixelEvent, MetaEvents }) => {
+          trackPixelEvent(MetaEvents.LEAD, {
+            email: data.email,
+            content_name: 'CRM Subscription Signup'
+          });
+        });
+
         toast.success('Conta criada com sucesso! Redirecionando para o pagamento...');
         
         // 3. Redirect to Kiwify with pre-filled billing info
-        // Replace 'YOUR_PRODUCT_ID' with the actual ID from the user later
         const kiwifyProductUrl = "https://pay.kiwify.com.br/arODqm7";
         const redirectUrl = `${kiwifyProductUrl}?name=${encodeURIComponent(data.fullName)}&email=${encodeURIComponent(data.email)}`;
         
