@@ -912,9 +912,12 @@ export type Database = {
           email: string | null
           full_name: string
           id: string
+          kiwify_order_id: string | null
+          kiwify_payload: Json | null
           manager_id: string | null
           phone: string | null
           role: string | null
+          subscription_status: string | null
           updated_at: string
           user_id: string
           whatsapp: string | null
@@ -925,9 +928,12 @@ export type Database = {
           email?: string | null
           full_name: string
           id?: string
+          kiwify_order_id?: string | null
+          kiwify_payload?: Json | null
           manager_id?: string | null
           phone?: string | null
           role?: string | null
+          subscription_status?: string | null
           updated_at?: string
           user_id: string
           whatsapp?: string | null
@@ -938,9 +944,12 @@ export type Database = {
           email?: string | null
           full_name?: string
           id?: string
+          kiwify_order_id?: string | null
+          kiwify_payload?: Json | null
           manager_id?: string | null
           phone?: string | null
           role?: string | null
+          subscription_status?: string | null
           updated_at?: string
           user_id?: string
           whatsapp?: string | null
