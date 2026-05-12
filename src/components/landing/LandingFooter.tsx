@@ -22,7 +22,7 @@ export function LandingFooter({ logo }: LandingFooterProps) {
             Preço
           </a>
           <a
-            href="mailto:contato@closercrm.com.br"
+            href="mailto:brunofp01@gmail.com"
             className="hover:text-gray-400 transition-colors flex items-center gap-1"
           >
             <Mail className="w-3 h-3" /> Contato

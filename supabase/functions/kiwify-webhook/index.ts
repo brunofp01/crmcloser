@@ -21,8 +21,10 @@ serve(async (req) => {
     const body = await req.json();
     console.log("Kiwify Webhook received:", body);
 
-    const { order_status, customer, order_id } = body;
+    const { order_status, customer, order_id, product_name } = body;
     const email = customer?.email;
+
+    console.log(`Processing webhook for ${email} - Status: ${order_status} - Order: ${order_id}`);
 
     if (!email) {
       return new Response(JSON.stringify({ error: "No email provided" }), {
@@ -41,17 +43,27 @@ serve(async (req) => {
       // 1. Find the user profile by email
       const { data: profile, error: profileError } = await supabaseClient
         .from("profiles")
-        .select("user_id")
-        .eq("email", email)
+        .select("user_id, email, full_name")
+        .ilike("email", email)
         .maybeSingle();
 
       if (profileError || !profile) {
-        console.error("Profile not found for email:", email);
-        return new Response(JSON.stringify({ error: "Profile not found" }), {
+        console.error(`Profile NOT found for email: ${email}. Looked up in profiles table.`);
+        
+        // Return 200 to Kiwify to stop retries if we can't find the user, 
+        // OR return 404 to let Kiwify retry later (current behavior).
+        // Given the requirement for "perfect" running, 404 is better for retries.
+        return new Response(JSON.stringify({ 
+          error: "Profile not found", 
+          received_email: email,
+          status: "pending_registration" 
+        }), {
           status: 404,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
+
+      console.log(`Profile found: ${profile.full_name} (${profile.user_id}). Updating status...`);
 
       // 2. Update Role to 'corretor' in user_roles
       const { error: roleError } = await supabaseClient
@@ -81,7 +93,7 @@ serve(async (req) => {
       const { data: profile } = await supabaseClient
         .from("profiles")
         .select("user_id")
-        .eq("email", email)
+        .ilike("email", email)
         .maybeSingle();
 
       if (profile) {

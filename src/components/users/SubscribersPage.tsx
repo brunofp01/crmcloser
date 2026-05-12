@@ -54,10 +54,9 @@ export function SubscribersPage() {
     );
   }
 
-  // Filter only users who went through the subscription flow 
-  // or have a subscription status defined
+  // Show all users who are not masters to allow management
   const subscribers = users.filter((u: any) => 
-    u.subscription_status || u.kiwify_order_id
+    u.email !== 'brunofp01@gmail.com'
   );
 
   const filteredSubscribers = subscribers.filter((u) => {
@@ -81,7 +80,7 @@ export function SubscribersPage() {
       case 'refunded':
         return <Badge className="bg-red-500/10 text-red-500 border-red-500/20 flex gap-1 w-fit"><XCircle size={12}/> Cancelada</Badge>;
       default:
-        return <Badge variant="outline" className="opacity-50 w-fit">{status || 'N/A'}</Badge>;
+        return <Badge variant="outline" className="opacity-50 w-fit">{status || 'Pendente'}</Badge>;
     }
   };
 
