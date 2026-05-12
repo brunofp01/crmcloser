@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 const signupSchema = z.object({
   fullName: z.string().min(3, 'Nome muito curto'),
   email: z.string().email('Email inválido'),
+  whatsapp: z.string().min(14, 'Número incompleto'),
   password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
 });
 
@@ -23,9 +24,23 @@ export function RegisterSubscriptionPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   
-  const { register, handleSubmit, formState: { errors } } = useForm<SignupFormData>({
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
   });
+
+  const handleWhatsAppChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length > 11) value = value.slice(0, 11);
+    
+    if (value.length > 2) {
+      value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+    }
+    if (value.length > 9) {
+      value = `${value.slice(0, 10)}-${value.slice(10)}`;
+    }
+    
+    setValue('whatsapp', value, { shouldValidate: true });
+  };
 
   const onSubmit = async (data: SignupFormData) => {
     setLoading(true);
@@ -37,6 +52,7 @@ export function RegisterSubscriptionPage() {
         options: {
           data: {
             full_name: data.fullName,
+            whatsapp: data.whatsapp,
           },
         },
       });
@@ -56,7 +72,7 @@ export function RegisterSubscriptionPage() {
         
         // 3. Redirect to Kiwify with pre-filled billing info
         const kiwifyProductUrl = "https://pay.kiwify.com.br/arODqm7";
-        const redirectUrl = `${kiwifyProductUrl}?name=${encodeURIComponent(data.fullName)}&email=${encodeURIComponent(data.email)}`;
+        const redirectUrl = `${kiwifyProductUrl}?name=${encodeURIComponent(data.fullName)}&email=${encodeURIComponent(data.email)}&phone=${encodeURIComponent(data.whatsapp.replace(/\D/g, ''))}`;
         
         // Small delay to allow toast to be seen
         setTimeout(() => {
@@ -146,6 +162,18 @@ export function RegisterSubscriptionPage() {
                   {...register('email')}
                 />
                 {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="whatsapp">WhatsApp</Label>
+                <Input
+                  id="whatsapp"
+                  placeholder="(00) 00000-0000"
+                  className="bg-white/5 border-white/10"
+                  {...register('whatsapp')}
+                  onChange={handleWhatsAppChange}
+                />
+                {errors.whatsapp && <p className="text-xs text-destructive">{errors.whatsapp.message}</p>}
               </div>
 
               <div className="space-y-2">
